@@ -51,29 +51,20 @@ public class TreeBuilder {
             repoTree.add(Main.buildPSI(repoPath + file).removeSpaces(blackList));
             System.out.println("Completed " + (++i) + " / " + javaFiles.size());
         }
-        return repoTree;
+        return getMethodBlocks(repoTree);
     }
 
-    List<ASTEntry> treeMutator(List<ASTEntry> trees){
-        List<ASTEntry> methodList = getMethodBlocks(trees);
-
-        int i = 0;
-        for(ASTEntry node : methodList) {
-            node.mutate(blackList);
-            System.out.println("Mutates completed: " + (++i) + "/" + methodList.size());
-
-        }
-        return getMethodBlocks(methodList);
-    }
-
-
-    private List<ASTEntry> getMethodBlocks(List<ASTEntry> tree){
+    private List<ASTEntry> getMethodBlocks(List<ASTEntry> trees){
         List<ASTEntry> methodsList = new ArrayList<>();
-        for(ASTEntry node : tree){
-            if(!node.nodeName.contains(CODEBLOCK_TOKEN))
-                methodsList.addAll(getMethodBlocks(node.children));
+        for(ASTEntry tree : trees){
+            if(!tree.nodeName.contains(METHOD_TOKEN))
+                methodsList.addAll(getMethodBlocks(tree.children));
             else {
-                methodsList.add(node);
+                for(ASTEntry node : tree.children)
+                    if(node.nodeName.contains(CODEBLOCK_TOKEN)) {
+                        methodsList.add(node);
+                        break;
+                    }
             }
         }
         return methodsList;
