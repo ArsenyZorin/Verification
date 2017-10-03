@@ -18,6 +18,13 @@ public class Main {
             "DOC_", "COMMENT", "PACKAGE", "IMPORT",
             "SPACE", "IMPLEMENTS", "EXTENDS", "THROWS",
             "PARAMETER_LIST");
+    private final static List<String> jumped = Arrays.asList(
+            "GOTO_KEYWORD", "CONTINUE_STATEMENT", "METHOD_CALL_EXPRESSION",
+            "WHILE_STATEMENT", "FOR_STATEMENT", "IF_STATEMENT",
+            "FOREACH_STATEMENT", "SWITCH_STATEMENT", "DO_WHILE_STATEMENT",
+            "BREAK_STATEMENT", "SWITCH_LABEL_STATEMENT", "CASE_KEYWORD",
+            "ELSE_KEYWORD", "RETURN_STATEMENT"
+    );
 
     public static void main(String[] args) {
         if(args.length < 1)
@@ -29,9 +36,12 @@ public class Main {
         List<String> blackList = whiteList.stream()
                 .filter(p->contains(spaces, p)).collect(Collectors.toList());
 
+        whiteList.removeAll(blackList);
+
         TreeBuilder treeBuilder = new TreeBuilder(generator, blackList, whiteList);
         System.out.println("Start analyzing repo : " + repoPath);
-        List<ASTEntry> originTree = treeBuilder.analyzeDir(repoPath);
+        ControlFlowGraph cfg = new ControlFlowGraph(treeBuilder.analyzeDir(repoPath), jumped);
+        cfg.build();
 
     }
 
