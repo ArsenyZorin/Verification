@@ -32,12 +32,7 @@ public class ControlFlowGraph{
                         node.nodeName.contains("RBRACE"))
                     continue;
                 if (!isJumped(node)) {
-                    if("DECLARATION_STATEMENT".equals(node.nodeName)) {
-                        for (ASTEntry nodeChild : node.children)
-                            if ("LOCAL_VARIABLE".equals(nodeChild.nodeName) && nodeChild.children.size() > 1)
-                                nodeShapes.add(new GraphElement(nodeChild, ElementShape.SQUARE));
-                    } else
-                        nodeShapes.add(new GraphElement(node, ElementShape.SQUARE));
+                    nodeShapes.addAll(nonJumpedList(node));
                 }
                 else {
                     if("BINARY_EXPRESSION".equals(node.nodeName)) {
@@ -70,7 +65,7 @@ public class ControlFlowGraph{
             }
 
             if (!isJumped(node))
-                nodeList.add(new GraphElement(node, ElementShape.SQUARE));
+                nodeList.addAll(nonJumpedList(node));
             else {
                 if("BINARY_EXPRESSION".equals(node.nodeName)){
                     nodeList.add(new GraphElement(node, ElementShape.DIAMOND));
@@ -79,6 +74,17 @@ public class ControlFlowGraph{
                 nodeList.addAll(splitJumped(node));
             }
         }
+        return nodeList;
+    }
+
+    private List<GraphElement> nonJumpedList(ASTEntry node){
+        List<GraphElement> nodeList = new ArrayList<>();
+        if("DECLARATION_STATEMENT".equals(node.nodeName)) {
+            for (ASTEntry nodeChild : node.children)
+                if ("LOCAL_VARIABLE".equals(nodeChild.nodeName) && nodeChild.children.size() > 1)
+                    nodeList.add(new GraphElement(nodeChild, ElementShape.SQUARE));
+        } else
+            nodeList.add(new GraphElement(node, ElementShape.SQUARE));
         return nodeList;
     }
 
