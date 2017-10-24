@@ -1,22 +1,17 @@
-
-
-import javax.swing.*;
-import java.awt.*;
-
 public class GraphElement {
     private ASTEntry node;
-    private Shape shape;
+    private ElementShape elementShape;
 
-    public GraphElement(ASTEntry node, Shape shape){
+    public GraphElement(ASTEntry node, ElementShape elementShape){
         this.node = node;
-        this.shape = shape;
+        this.elementShape = elementShape;
     }
 
     public ASTEntry getNode() {
         return node;
     }
 
-    public Shape getShape() {
-        return shape;
+    public ElementShape getElementShape() {
+        return elementShape;
     }
 }
