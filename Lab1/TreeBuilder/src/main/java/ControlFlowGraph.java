@@ -1,20 +1,13 @@
-import com.intellij.lang.ASTNode;
-
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class ControlFlowGraph{
 
-    private enum Shape{
-        ELIPSE,
-        SQUARE,
-        DIAMOND
-    }
     private List<ASTEntry> trees;
     private List<String> jumped;
-    private List<HashMap <ASTEntry, Shape>> treeShapes = new ArrayList<>();
+    private List<List<GraphElement>> treeShapes = new ArrayList<>();
     private static final String METHOD_TOKEN = "METHOD";
 
     public ControlFlowGraph(List<ASTEntry> trees, List<String> jumped){
@@ -22,20 +15,27 @@ public class ControlFlowGraph{
         this.jumped = jumped;
 
         getShapes();
+        build();
     }
 
     private void getShapes(){
         for(ASTEntry tree: this.trees){
-            HashMap <ASTEntry,Shape> nodeShapes = new HashMap<>();
+            List <GraphElement> nodeShapes = new ArrayList<>();
+            for (ASTEntry node : tree.parent.children)
+                if (node.nodeName.equals("IDENTIFIER")) {
+                    nodeShapes.add(new GraphElement(node, Shape.ELLIPSE));
+                    break;
+                }
+
             for(ASTEntry node: tree.children) {
                 if (node.nodeName.contains("CODE_BLOCK") ||
                         node.nodeName.contains("LBRACE") ||
                         node.nodeName.contains("RBRACE"))
                     continue;
                 if (!isJumped(node))
-                    nodeShapes.put(node, Shape.SQUARE);
+                    nodeShapes.add(new GraphElement(node, Shape.SQUARE));
                 else
-                    nodeShapes.put(node, Shape.DIAMOND);
+                    nodeShapes.add(new GraphElement(node, Shape.SQUARE));
             }
             treeShapes.add(nodeShapes);
         }
@@ -46,8 +46,15 @@ public class ControlFlowGraph{
     }
 
     public void build(){
-        HelloWorld frame = new HelloWorld();
-        frame.view();
+        JFrame frame = new JFrame("Draw ..");
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        JApplet applet = new BuildFigure(treeShapes.get(0));
+
+        frame.getContentPane().add(applet);
+        frame.pack();
+        frame.setSize(new Dimension(400, 400));
+        frame.setVisible(true);
     }
 
 }
