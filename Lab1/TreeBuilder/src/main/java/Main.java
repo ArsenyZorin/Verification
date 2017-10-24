@@ -17,8 +17,8 @@ public class Main {
     private final static List<String> spaces = Arrays.asList(
             "DOC_", "COMMENT", "PACKAGE", "IMPORT",
             "SPACE", "IMPLEMENTS", "EXTENDS", "THROWS",
-            "PARAMETER_LIST", "BRACE", "SEMICOLON",
-            "PARENTH", "_KEYWORD");
+            "BRACE", "SEMICOLON", "PARENTH", "_KEYWORD", "COMMA"
+    );
     private final static List<String> jumped = Arrays.asList(
             "GOTO_KEYWORD", "CONTINUE_STATEMENT", "METHOD_CALL_EXPRESSION",
             "WHILE_STATEMENT", "FOR_STATEMENT", "IF_STATEMENT",
@@ -46,10 +46,6 @@ public class Main {
 
     }
 
-    public Main getMain() {
-        return this;
-    }
-
     private static boolean contains(List<String> blackList, String nodeName){
         for(String blackElem : blackList)
             if(nodeName.contains(blackElem))
@@ -61,11 +57,6 @@ public class Main {
     private static List<String> getAllAvailableTokens() {
         return generator.getAllAvailableTokens();
     }
-
-    public static String parsePSIText(String filename) {
-        return generator.parsePSIText(filename);
-    }
-
     public static ASTEntry buildPSI(String filename) {
         return generator.parseFile(filename);
     }
