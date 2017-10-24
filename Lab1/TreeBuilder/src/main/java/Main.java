@@ -17,13 +17,14 @@ public class Main {
     private final static List<String> spaces = Arrays.asList(
             "DOC_", "COMMENT", "PACKAGE", "IMPORT",
             "SPACE", "IMPLEMENTS", "EXTENDS", "THROWS",
-            "PARAMETER_LIST");
+            "PARAMETER_LIST", "BRACE", "SEMICOLON",
+            "PARENTH", "_KEYWORD");
     private final static List<String> jumped = Arrays.asList(
             "GOTO_KEYWORD", "CONTINUE_STATEMENT", "METHOD_CALL_EXPRESSION",
             "WHILE_STATEMENT", "FOR_STATEMENT", "IF_STATEMENT",
             "FOREACH_STATEMENT", "SWITCH_STATEMENT", "DO_WHILE_STATEMENT",
             "BREAK_STATEMENT", "SWITCH_LABEL_STATEMENT", "CASE_KEYWORD",
-            "ELSE_KEYWORD", "RETURN_STATEMENT"
+            "ELSE_KEYWORD", "BINARY_EXPRESSION"
     );
 
     public static void main(String[] args) {
