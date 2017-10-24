@@ -23,7 +23,7 @@ public class ControlFlowGraph{
             List <GraphElement> nodeShapes = new ArrayList<>();
             for (ASTEntry node : tree.parent.children)
                 if (node.nodeName.equals("IDENTIFIER")) {
-                    nodeShapes.add(new GraphElement(node, Shape.ELLIPSE));
+                    nodeShapes.add(new GraphElement(node, ElementShape.ELLIPSE));
                     break;
                 }
 
@@ -33,9 +33,9 @@ public class ControlFlowGraph{
                         node.nodeName.contains("RBRACE"))
                     continue;
                 if (!isJumped(node))
-                    nodeShapes.add(new GraphElement(node, Shape.SQUARE));
+                    nodeShapes.add(new GraphElement(node, ElementShape.SQUARE));
                 else
-                    nodeShapes.add(new GraphElement(node, Shape.SQUARE));
+                    nodeShapes.add(new GraphElement(node, ElementShape.DIAMOND));
             }
             treeShapes.add(nodeShapes);
         }
