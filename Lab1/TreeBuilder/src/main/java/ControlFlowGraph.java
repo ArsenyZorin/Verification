@@ -15,7 +15,6 @@ public class ControlFlowGraph{
         this.jumped = jumped;
 
         getShapes();
-        build();
     }
 
     private void getShapes(){
@@ -33,7 +32,12 @@ public class ControlFlowGraph{
                         node.nodeName.contains("RBRACE"))
                     continue;
                 if (!isJumped(node)) {
-                    nodeShapes.add(new GraphElement(node, ElementShape.SQUARE));
+                    if("DECLARATION_STATEMENT".equals(node.nodeName)) {
+                        for (ASTEntry nodeChild : node.children)
+                            if ("LOCAL_VARIABLE".equals(nodeChild.nodeName) && nodeChild.children.size() > 1)
+                                nodeShapes.add(new GraphElement(nodeChild, ElementShape.SQUARE));
+                    } else
+                        nodeShapes.add(new GraphElement(node, ElementShape.SQUARE));
                 }
                 else {
                     if("BINARY_EXPRESSION".equals(node.nodeName)) {
@@ -50,9 +54,20 @@ public class ControlFlowGraph{
     private List<GraphElement> splitJumped(ASTEntry jumpedNode){
         List<GraphElement> nodeList = new ArrayList<>();
         for(ASTEntry node : jumpedNode.children) {
-            if ("BLOCK_STATEMENT".equals(node.nodeName) ||
-                    "CODE_STATEMENT".equals(node.nodeName))
+            if ("BLOCK_STATEMENT".equals(node.nodeName)) {
                 nodeList.addAll(splitJumped(node));
+                return nodeList;
+            }
+
+            if("CODE_BLOCK".equals(node.nodeName)){
+                for (ASTEntry nodeChild : node.children)
+                    if(!isJumped(nodeChild)) {
+                        nodeList.add(new GraphElement(nodeChild, ElementShape.SQUARE));
+                    }
+                    else
+                        splitJumped(nodeChild);
+                return nodeList;
+            }
 
             if (!isJumped(node))
                 nodeList.add(new GraphElement(node, ElementShape.SQUARE));
@@ -64,16 +79,6 @@ public class ControlFlowGraph{
                 nodeList.addAll(splitJumped(node));
             }
         }
-/*
-        if("FOR_STATEMENT".equals(jumpedNode.nodeName))
-            for (ASTEntry node : jumpedNode.children) {
-                if ("DECLARATION_STATEMENT".equals(node.nodeName))
-                    nodeList.add(new GraphElement(node, ElementShape.SQUARE));
-                else if("BINARY_EXPRESSION".equals(node.nodeName))
-                    nodeList.add(new GraphElement(node, ElementShape.DIAMOND));
-                else if("BLOCK_STATEMENT".equals(node.nodeName))
-                    nodeList.add(new GraphElement(node, ElementShape.SQUARE));
-            }*/
         return nodeList;
     }
 
@@ -82,7 +87,7 @@ public class ControlFlowGraph{
     }
 
     public void build(){
-        JFrame frame = new JFrame("Draw ..");
+        JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         JApplet applet = new BuildFigure(treeShapes.get(0));
