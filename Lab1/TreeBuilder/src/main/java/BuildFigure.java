@@ -7,46 +7,89 @@ import java.util.List;
 
 public class BuildFigure extends JApplet {
     private List<GraphElement> elementList;
+    private List<Block> blocks;
+    private int width = 150;
+    private int height = 50;
 
-    public BuildFigure(List<GraphElement> elementList){
+    public BuildFigure(List<GraphElement> elementList, List<Block> blocks){
         this.elementList = elementList;
+        this.blocks = blocks;
     }
 
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        Point start_with = new Point(150, 50);
+        Point start_with = new Point(width, height);
         Point prev_elem_end = new Point(0, 0);
+        Point block_elem = new Point(0, 0);
 
         g2.setPaint(Color.BLACK);
 
         for(GraphElement element : elementList) {
             if(ElementShape.ELLIPSE.equals(element.getElementShape())) {
-                Ellipse2D ellipse = new Ellipse2D.Double(start_with.x, start_with.y, 150, 50);
+                Ellipse2D ellipse = new Ellipse2D.Double(start_with.x, start_with.y, width, height);
                 g2.drawString(element.getNode().text, (float) (ellipse.getCenterX() - ellipse.getCenterX() / 8), (float) ellipse.getCenterY());
                 g2.draw(ellipse);
-                prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY());
+                prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY() + 50);
             }
             else if(ElementShape.SQUARE.equals(element.getElementShape())){
-                Rectangle rectangle = new Rectangle(start_with.x, prev_elem_end.y + 50, 150, 50);
-                g2.drawString(element.getNode().text, (float) (rectangle.getCenterX() - rectangle.getCenterX() / 8), (float) rectangle.getCenterY());
-                g2.draw(rectangle);
-                prev_elem_end.setLocation(rectangle.getMaxX(), rectangle.getMaxY());
+                if(inBlock(element.getNode()))
+                    continue;
+                
+                int x = start_with.x;
+                int y = prev_elem_end.y;
+
+                prev_elem_end = drawSquare(g2, x, y, element.getNode().text);
+                //prev_elem_end.setLocation(rectangle.getMaxX(), rectangle.getMaxY());
 
             }
             else {
-                Diamond diamond = new Diamond(start_with.x,  prev_elem_end.y + 50, 150, 50);
                 int x = start_with.x;
-                int y = prev_elem_end.y + 50;
+                int y = prev_elem_end.y;
+                Diamond diamond = new Diamond(x,  y, width, height);
                 AffineTransform at = AffineTransform.getTranslateInstance(x, y);
                 Shape shape = at.createTransformedShape(diamond);
                 g2.drawString(element.getNode().text, (float) (diamond.getCenterX() - diamond.getCenterX() / 8), (float) diamond.getCenterY());
-                prev_elem_end.setLocation(diamond.getMaxX(), diamond.getMaxY());
+                prev_elem_end.setLocation(diamond.getMaxX(), diamond.getMaxY() + 50);
                 g2.draw(shape);
-            }
 
+                for (Block block : blocks){
+                    if (block.getStartsWith().equals(element.getNode())) {
+                        block_elem.setLocation(start_with.x + 2 * width, y);
+                        drawBlock(g2, blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), block_elem);
+                    }
+                }
+            }
         }
+    }
+
+    private void drawDiamond(Graphics2D g2, Point drawPoint, String text){
+
+    }
+
+    private Point drawSquare(Graphics2D g2, int x, int y, String text){
+        Rectangle rectangle = new Rectangle(x, y, width, height);
+        g2.drawString(text, (float) (rectangle.getCenterX() - rectangle.getCenterX() / 8), (float) rectangle.getCenterY());
+        g2.draw(rectangle);
+        return new Point((int)rectangle.getX(), (int)rectangle.getMaxY() + 50);
+    }
+
+    private void drawBlock(Graphics2D g2, int listIndex, int nodeIndex, Point drawPoint){
+        List<GraphElement> blockElems = blocks.get(listIndex).getBlock();
+        for(int i = nodeIndex + 1; i < blockElems.size(); i++){
+            if(ElementShape.SQUARE.equals(blockElems.get(i).getElementShape())){
+                drawPoint = drawSquare(g2, drawPoint.x, drawPoint.y, blockElems.get(i).getNode().text);
+            }
+        }
+    }
+
+    private boolean inBlock(ASTEntry elem){
+        for(Block block : blocks){
+            if(block.getNodes().contains(elem))
+                return true;
+        }
+        return false;
     }
 
     public class Diamond extends Path2D.Double{
