@@ -36,23 +36,20 @@ public class BuildFigure extends JApplet {
             else if(ElementShape.SQUARE.equals(element.getElementShape())){
                 if(inBlock(element.getNode()))
                     continue;
-                
+
                 int x = start_with.x;
                 int y = prev_elem_end.y;
 
-                prev_elem_end = drawSquare(g2, x, y, element.getNode().text);
+                prev_elem_end = drawSquare(g2, new Point(x, y), element.getNode().text);
                 //prev_elem_end.setLocation(rectangle.getMaxX(), rectangle.getMaxY());
 
             }
             else {
                 int x = start_with.x;
                 int y = prev_elem_end.y;
-                Diamond diamond = new Diamond(x,  y, width, height);
-                AffineTransform at = AffineTransform.getTranslateInstance(x, y);
-                Shape shape = at.createTransformedShape(diamond);
-                g2.drawString(element.getNode().text, (float) (diamond.getCenterX() - diamond.getCenterX() / 8), (float) diamond.getCenterY());
-                prev_elem_end.setLocation(diamond.getMaxX(), diamond.getMaxY() + 50);
-                g2.draw(shape);
+
+                prev_elem_end = drawDiamond(g2, new Point(x, y), element.getNode().text);
+                //prev_elem_end.setLocation(diamond.getMaxX(), diamond.getMaxY() + 50);
 
                 for (Block block : blocks){
                     if (block.getStartsWith().equals(element.getNode())) {
@@ -64,12 +61,17 @@ public class BuildFigure extends JApplet {
         }
     }
 
-    private void drawDiamond(Graphics2D g2, Point drawPoint, String text){
-
+    private Point drawDiamond(Graphics2D g2, Point drawPoint, String text){
+        Diamond diamond = new Diamond(drawPoint.x,  drawPoint.y, width, height);
+        AffineTransform at = AffineTransform.getTranslateInstance(drawPoint.x, drawPoint.y);
+        Shape shape = at.createTransformedShape(diamond);
+        g2.drawString(text, (float) (diamond.getCenterX() - diamond.getCenterX() / 8), (float) diamond.getCenterY());
+        g2.draw(shape);
+        return new Point((int)diamond.getMaxX(), (int)diamond.getMaxY() + 50);
     }
 
-    private Point drawSquare(Graphics2D g2, int x, int y, String text){
-        Rectangle rectangle = new Rectangle(x, y, width, height);
+    private Point drawSquare(Graphics2D g2, Point drawPoint, String text){
+        Rectangle rectangle = new Rectangle(drawPoint.x, drawPoint.y, width, height);
         g2.drawString(text, (float) (rectangle.getCenterX() - rectangle.getCenterX() / 8), (float) rectangle.getCenterY());
         g2.draw(rectangle);
         return new Point((int)rectangle.getX(), (int)rectangle.getMaxY() + 50);
@@ -78,9 +80,10 @@ public class BuildFigure extends JApplet {
     private void drawBlock(Graphics2D g2, int listIndex, int nodeIndex, Point drawPoint){
         List<GraphElement> blockElems = blocks.get(listIndex).getBlock();
         for(int i = nodeIndex + 1; i < blockElems.size(); i++){
-            if(ElementShape.SQUARE.equals(blockElems.get(i).getElementShape())){
-                drawPoint = drawSquare(g2, drawPoint.x, drawPoint.y, blockElems.get(i).getNode().text);
-            }
+            if(ElementShape.SQUARE.equals(blockElems.get(i).getElementShape()))
+                drawPoint = drawSquare(g2, drawPoint, blockElems.get(i).getNode().text);
+            else if(ElementShape.DIAMOND.equals(blockElems.get(i).getElementShape()))
+                drawPoint = drawDiamond(g2, drawPoint, blockElems.get(i).getNode().text);
         }
     }
 
