@@ -1,3 +1,6 @@
+import com.intellij.lang.ASTNode;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class Block {
@@ -24,5 +27,12 @@ public class Block {
                 return;
             }
         }
+    }
+
+    public List<ASTEntry> getNodes(){
+        List<ASTEntry> nodes = new ArrayList<>();
+        for (GraphElement element : block)
+            nodes.add(element.getNode());
+        return nodes;
     }
 }
