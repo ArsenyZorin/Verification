@@ -100,7 +100,7 @@ public class ControlFlowGraph{
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JApplet applet = new BuildFigure(treeShapes.get(0));
+        JApplet applet = new BuildFigure(treeShapes.get(0), blocks);
 
         frame.getContentPane().add(applet);
         frame.pack();
