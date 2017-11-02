@@ -74,33 +74,9 @@ public class TreeBuilder {
         List<ASTEntry> methods = null;
         try {
             methods = analyzeDirectory(repoPath);
-            //gsonSerialization(methods, workingDir + "/javaFileTree");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return methods;
-    }
-
-    private void gsonSerialization(Object obj, String path){
-        Gson gson = new Gson();
-
-        FileWriter fw = null;
-        BufferedWriter bw = null;
-        try {
-            fw = new FileWriter(path);
-            bw = new BufferedWriter(fw);
-            bw.write(gson.toJson(obj));
-        }catch (Exception e){
-            e.printStackTrace();
-        }finally {
-            try {
-                if (bw != null)
-                    bw.close();
-                if (fw != null)
-                    fw.close();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
     }
 }
