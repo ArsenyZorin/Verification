@@ -8,6 +8,8 @@ public class ControlFlowGraph{
     private List<ASTEntry> trees;
     private List<String> jumped;
     private List<List<GraphElement>> treeShapes = new ArrayList<>();
+    private List<Block> blocks = new ArrayList<>();
+
     private static final String METHOD_TOKEN = "METHOD";
 
     public ControlFlowGraph(List<ASTEntry> trees, List<String> jumped){
@@ -39,7 +41,9 @@ public class ControlFlowGraph{
                         nodeShapes.add(new GraphElement(node, ElementShape.DIAMOND));
                         continue;
                     }
-                    nodeShapes.addAll(splitJumped(node));
+                    Block block = new Block(splitJumped(node));
+                    nodeShapes.addAll(block.getBlock());
+                    blocks.add(block);
                 }
             }
             treeShapes.add(nodeShapes);
