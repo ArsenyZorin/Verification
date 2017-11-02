@@ -41,7 +41,6 @@ public class BuildFigure extends JApplet {
                 int y = prev_elem_end.y;
 
                 prev_elem_end = drawSquare(g2, new Point(x, y), element.getNode().text);
-                //prev_elem_end.setLocation(rectangle.getMaxX(), rectangle.getMaxY());
 
             }
             else {
@@ -49,7 +48,6 @@ public class BuildFigure extends JApplet {
                 int y = prev_elem_end.y;
 
                 prev_elem_end = drawDiamond(g2, new Point(x, y), element.getNode().text);
-                //prev_elem_end.setLocation(diamond.getMaxX(), diamond.getMaxY() + 50);
 
                 for (Block block : blocks){
                     if (block.getStartsWith().equals(element.getNode())) {

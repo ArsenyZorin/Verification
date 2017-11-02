@@ -1,5 +1,3 @@
-import com.intellij.lang.ASTNode;
-
 import java.util.ArrayList;
 import java.util.List;
 
