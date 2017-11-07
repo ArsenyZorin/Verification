@@ -104,10 +104,11 @@ public class ControlFlowGraph{
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         JPanel panel = new BuildFigure(treeShapes.get(0), blocks);
+        panel.setPreferredSize(new Dimension(1000, 5000));
+        JScrollPane scrollPane = new JScrollPane(panel);
+        //panel.setAutoscrolls(true);
 
-        frame.getContentPane().add(panel);
-        frame.pack();
-        frame.setSize(new Dimension(400, 400));
+        frame.add(scrollPane);
         frame.setVisible(true);
     }
 
