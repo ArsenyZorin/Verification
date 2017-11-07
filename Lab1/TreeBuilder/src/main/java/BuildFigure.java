@@ -73,17 +73,10 @@ public class BuildFigure extends JPanel {
         int x = (int)prevShape.getBounds().getCenterX();
         int y = (int)prevShape.getBounds().getMaxY();
 
-        if((x - width / 2) == diamond.getBounds().getX())
-            g2.drawLine(x, y, (int)diamond.getBounds().getCenterX(), (int)diamond.getBounds().getMinY());
+        if((x - width / 2) == diamond.getBounds().getX()) {
+            g2.drawLine(x, y, (int) diamond.getBounds().getCenterX(), (int) diamond.getBounds().getMinY());
+        }
         else{
-            /*int index = shapes.indexOf(prevShape);
-            for(int i = 0; i < index; i++){
-                x = (int)shapes.get(i).getBounds().getX();
-                y = (int)shapes.get(i).getBounds().getY();
-                if(x == shape.getBounds().getX() && (shape.getBounds().getY() - y <= 100))
-                    g2.drawLine(x + width / 2, y + height, (int)diamond.getCenterX(), (int)diamond.getMinY());
-
-            }*/
             findUpper(g2, diamond);
         }
 
@@ -102,6 +95,7 @@ public class BuildFigure extends JPanel {
             x = (int) prevShape.getBounds().getMaxX();
             y = (int) prevShape.getBounds().getCenterY();
             g2.drawLine(x, y, (int) rectangle.getMinX(), (int) rectangle.getCenterY());
+            g2.drawString("True", x + width / 2 - "True".length() * 3, y - 1);
         }
         else if(x - width /2 != rectangle.getMinX()){
             findUpper(g2, rectangle);
