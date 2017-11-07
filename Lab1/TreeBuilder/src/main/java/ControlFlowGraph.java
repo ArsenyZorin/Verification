@@ -1,9 +1,6 @@
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ControlFlowGraph{
@@ -12,8 +9,6 @@ public class ControlFlowGraph{
     private List<String> jumped;
     private List<List<GraphElement>> treeShapes = new ArrayList<>();
     private List<Block> blocks = new ArrayList<>();
-
-    private static final String METHOD_TOKEN = "METHOD";
 
     public ControlFlowGraph(List<ASTEntry> trees, List<String> jumped){
         this.trees = trees;
@@ -101,6 +96,9 @@ public class ControlFlowGraph{
     public void build(){
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        for (Block block: blocks)
+            block.refactor();
 
         BuildFigure cfg = new BuildFigure(treeShapes.get(0), blocks);
         cfg.setPreferredSize(new Dimension(1000, 3000));

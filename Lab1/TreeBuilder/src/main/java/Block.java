@@ -36,6 +36,24 @@ public class Block {
         }
     }
 
+    public void refactor(){
+        int index = -1;
+        for (GraphElement node: block){
+            for (ASTEntry childNode : node.getNode().children) {
+                if ("POSTFIX_EXPRESSION".equals(childNode.nodeName))
+                    if("FOR_STATEMENT".equals(childNode.parent.parent.nodeName)) {
+                        index = block.indexOf(node);
+                        break;
+                    }
+            }
+        }
+        if(index == -1) return;
+
+        GraphElement temp = block.get(index);
+        block.remove(temp);
+        block.add(temp);
+    }
+
     public List<ASTEntry> getNodes(){
         List<ASTEntry> nodes = new ArrayList<>();
         for (GraphElement element : block)
