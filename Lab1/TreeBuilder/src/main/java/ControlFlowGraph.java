@@ -1,6 +1,10 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ControlFlowGraph{
@@ -48,6 +52,13 @@ public class ControlFlowGraph{
             }
             treeShapes.add(nodeShapes);
         }
+        for(Block block1 : blocks){
+            for (Block block : blocks){
+                if(block.equals(block1)) continue;
+                if(block1.getBlock().containsAll(block.getBlock()))
+                    block1.removeBlocks(block.getBlock());
+            }
+        }
     }
 
     private List<GraphElement> splitJumped(ASTEntry jumpedNode){
@@ -67,6 +78,7 @@ public class ControlFlowGraph{
                 Block block = new Block(splitJumped(node));
                 nodeList.addAll(block.getBlock());
                 blocks.add(block);
+                nodeList.addAll(splitJumped(node));
             }
         }
         return nodeList;
@@ -91,9 +103,9 @@ public class ControlFlowGraph{
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JApplet applet = new BuildFigure(treeShapes.get(0), blocks);
+        JPanel panel = new BuildFigure(treeShapes.get(0), blocks);
 
-        frame.getContentPane().add(applet);
+        frame.getContentPane().add(panel);
         frame.pack();
         frame.setSize(new Dimension(400, 400));
         frame.setVisible(true);
