@@ -61,6 +61,9 @@ public class BuildFigure extends JPanel {
                 drawBlock(g2, blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), block_elem);
             }
         }
+        for(Block block : blocks){
+            block.setDrawn(false);
+        }
     }
 
     private Point drawDiamond(Graphics2D g2, Point drawPoint, String text){
@@ -124,7 +127,7 @@ public class BuildFigure extends JPanel {
                 drawPoint = drawSquare(g2, drawPoint, blockElems.get(i).getNode().text);
             else if(ElementShape.DIAMOND.equals(blockElems.get(i).getElementShape())) {
                 drawPoint = drawDiamond(g2, drawPoint, blockElems.get(i).getNode().text);
-                drawPoint.setLocation(drawPoint.x + 2 * width, drawPoint.y);
+                drawPoint.setLocation(drawPoint.x + width, drawPoint.y - 100);
                 Block block = getBlockWithStart(blockElems.get(i).getNode());
                 blocks.get(blocks.indexOf(block)).setDrawn(true);
                 drawBlock(g2, blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), drawPoint);
