@@ -8,6 +8,7 @@ import java.util.List;
 public class BuildFigure extends JPanel {
     private List<GraphElement> elementList;
     private List<Block> blocks;
+    Shape prevShape;
     private int width = 150;
     private int height = 50;
 
@@ -32,6 +33,7 @@ public class BuildFigure extends JPanel {
                 g2.drawString(element.getNode().text, (float) (ellipse.getCenterX() - element.getNode().text.length() * 3), (float) ellipse.getCenterY());
                 g2.draw(ellipse);
                 prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY() + 50);
+                prevShape = ellipse;
 
             }
             else if(ElementShape.SQUARE.equals(element.getElementShape())){
@@ -64,7 +66,14 @@ public class BuildFigure extends JPanel {
         Shape shape = at.createTransformedShape(diamond);
         g2.drawString(text, (float) (diamond.getCenterX() - text.length() * 3), (float) diamond.getCenterY());
         g2.draw(shape);
-        g2.drawLine((int)(drawPoint.x + width/2.0), drawPoint.y - height, (int)diamond.getCenterX(), (int)diamond.getMinY());
+
+        int x = (int)prevShape.getBounds().getCenterX();
+        int y = (int)prevShape.getBounds().getMaxY();
+
+        if((x - width / 2) == diamond.getX())
+            g2.drawLine(x, y, (int)diamond.getCenterX(), (int)diamond.getMinY());
+        
+        prevShape = shape;
         return new Point((int)diamond.getMaxX(), (int)diamond.getMaxY() + 50);
     }
 
@@ -72,7 +81,16 @@ public class BuildFigure extends JPanel {
         Rectangle rectangle = new Rectangle(drawPoint.x, drawPoint.y, width, height);
         g2.drawString(text, (float) (rectangle.getCenterX() - text.length() * 3), (float) rectangle.getCenterY());
         g2.draw(rectangle);
-        g2.drawLine((int)(drawPoint.x + width/2.0), drawPoint.y - height, (int)rectangle.getCenterX(), (int)rectangle.getMinY());
+        int x = (int)prevShape.getBounds().getCenterX();
+        int y = (int)prevShape.getBounds().getMaxY();
+        if(y - height == rectangle.getY()) {
+            x = (int) prevShape.getBounds().getMaxX();
+            y = (int) prevShape.getBounds().getCenterY();
+            g2.drawLine(x, y, (int) rectangle.getMinX(), (int) rectangle.getCenterY());
+        }
+        else
+            g2.drawLine(x, y, (int)rectangle.getCenterX(), (int)rectangle.getMinY());
+        prevShape = rectangle;
         return new Point((int)rectangle.getX(), (int)rectangle.getMaxY() + 50);
     }
 
@@ -127,6 +145,14 @@ public class BuildFigure extends JPanel {
             lineTo(width, height / 2);
             lineTo(width / 2, height);
             closePath();
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
         }
 
         public double getMaxX() {
