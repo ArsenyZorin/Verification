@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ControlFlowGraph{
@@ -103,12 +102,13 @@ public class ControlFlowGraph{
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JPanel panel = new BuildFigure(treeShapes.get(0), blocks);
-        panel.setPreferredSize(new Dimension(1000, 5000));
-        JScrollPane scrollPane = new JScrollPane(panel);
-        //panel.setAutoscrolls(true);
+        BuildFigure cfg = new BuildFigure(treeShapes.get(0), blocks);
+        JScrollPane scrollPane = new JScrollPane(cfg);
+        cfg.setAutoscrolls(true);
 
-        frame.add(scrollPane);
+        frame.getContentPane().add(scrollPane);
+        frame.pack();
+        frame.setLocationByPlatform(true);
         frame.setVisible(true);
     }
 
