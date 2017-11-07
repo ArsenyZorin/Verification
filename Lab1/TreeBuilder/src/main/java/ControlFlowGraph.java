@@ -53,21 +53,10 @@ public class ControlFlowGraph{
     private List<GraphElement> splitJumped(ASTEntry jumpedNode){
         List<GraphElement> nodeList = new ArrayList<>();
         for(ASTEntry node : jumpedNode.children) {
-            if ("BLOCK_STATEMENT".equals(node.nodeName)) {
+            if ("BLOCK_STATEMENT".equals(node.nodeName) || "CODE_BLOCK".equals(node.nodeName)) {
                 nodeList.addAll(splitJumped(node));
                 return nodeList;
             }
-
-            if("CODE_BLOCK".equals(node.nodeName)){
-                for (ASTEntry nodeChild : node.children)
-                    if(!isJumped(nodeChild)) {
-                        nodeList.add(new GraphElement(nodeChild, ElementShape.SQUARE));
-                    }
-                    else
-                        splitJumped(nodeChild);
-                return nodeList;
-            }
-
             if (!isJumped(node))
                 nodeList.addAll(nonJumpedList(node));
             else {
@@ -75,7 +64,9 @@ public class ControlFlowGraph{
                     nodeList.add(new GraphElement(node, ElementShape.DIAMOND));
                     continue;
                 }
-                nodeList.addAll(splitJumped(node));
+                Block block = new Block(splitJumped(node));
+                nodeList.addAll(block.getBlock());
+                blocks.add(block);
             }
         }
         return nodeList;
