@@ -1,9 +1,9 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class ControlFlowGraph{
@@ -103,6 +103,7 @@ public class ControlFlowGraph{
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         BuildFigure cfg = new BuildFigure(treeShapes.get(0), blocks);
+        cfg.setPreferredSize(new Dimension(1000, 3000));
         JScrollPane scrollPane = new JScrollPane(cfg);
         cfg.setAutoscrolls(true);
 
@@ -111,5 +112,4 @@ public class ControlFlowGraph{
         frame.setLocationByPlatform(true);
         frame.setVisible(true);
     }
-
 }
