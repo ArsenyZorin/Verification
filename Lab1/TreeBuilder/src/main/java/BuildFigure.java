@@ -29,18 +29,16 @@ public class BuildFigure extends JPanel {
         for(GraphElement element : elementList) {
             if(ElementShape.ELLIPSE.equals(element.getElementShape())) {
                 Ellipse2D ellipse = new Ellipse2D.Double(start_with.x, start_with.y, width, height);
-                g2.drawString(element.getNode().text, (float) (ellipse.getCenterX() - ellipse.getCenterX() / 8), (float) ellipse.getCenterY());
+                g2.drawString(element.getNode().text, (float) (ellipse.getCenterX() - element.getNode().text.length() * 3), (float) ellipse.getCenterY());
                 g2.draw(ellipse);
                 prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY() + 50);
+
             }
             else if(ElementShape.SQUARE.equals(element.getElementShape())){
                 if(inBlock(element.getNode()))
                     continue;
 
-                int x = start_with.x;
-                int y = prev_elem_end.y;
-
-                prev_elem_end = drawSquare(g2, new Point(x, y), element.getNode().text);
+                prev_elem_end = drawSquare(g2, new Point(start_with.x, prev_elem_end.y), element.getNode().text);
 
             }
             else {
@@ -64,15 +62,17 @@ public class BuildFigure extends JPanel {
         Diamond diamond = new Diamond(drawPoint.x,  drawPoint.y, width, height);
         AffineTransform at = AffineTransform.getTranslateInstance(drawPoint.x, drawPoint.y);
         Shape shape = at.createTransformedShape(diamond);
-        g2.drawString(text, (float) (diamond.getCenterX() - diamond.getCenterX() / 12), (float) diamond.getCenterY());
+        g2.drawString(text, (float) (diamond.getCenterX() - text.length() * 3), (float) diamond.getCenterY());
         g2.draw(shape);
+        g2.drawLine((int)(drawPoint.x + width/2.0), drawPoint.y - height, (int)diamond.getCenterX(), (int)diamond.getMinY());
         return new Point((int)diamond.getMaxX(), (int)diamond.getMaxY() + 50);
     }
 
     private Point drawSquare(Graphics2D g2, Point drawPoint, String text){
         Rectangle rectangle = new Rectangle(drawPoint.x, drawPoint.y, width, height);
-        g2.drawString(text, (float) (rectangle.getCenterX() - rectangle.getCenterX() / 8), (float) rectangle.getCenterY());
+        g2.drawString(text, (float) (rectangle.getCenterX() - text.length() * 3), (float) rectangle.getCenterY());
         g2.draw(rectangle);
+        g2.drawLine((int)(drawPoint.x + width/2.0), drawPoint.y - height, (int)rectangle.getCenterX(), (int)rectangle.getMinY());
         return new Point((int)rectangle.getX(), (int)rectangle.getMaxY() + 50);
     }
 
@@ -135,6 +135,10 @@ public class BuildFigure extends JPanel {
 
         public double getMaxY() {
             return this.y + this.height;
+        }
+
+        public double getMinY() {
+            return this.y;
         }
 
         public double getCenterX() {
