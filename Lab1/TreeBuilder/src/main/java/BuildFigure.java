@@ -5,7 +5,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.util.List;
 
-public class BuildFigure extends JApplet {
+public class BuildFigure extends JPanel {
     private List<GraphElement> elementList;
     private List<Block> blocks;
     private int width = 150;
@@ -44,17 +44,18 @@ public class BuildFigure extends JApplet {
 
             }
             else {
+                Block block = getBlockWithStart(element.getNode());
+                if(block == null) continue;
+                if(block.isDrawn()) continue;
+
                 int x = start_with.x;
                 int y = prev_elem_end.y;
 
                 prev_elem_end = drawDiamond(g2, new Point(x, y), element.getNode().text);
 
-                for (Block block : blocks){
-                    if (block.getStartsWith().equals(element.getNode())) {
-                        block_elem.setLocation(start_with.x + 2 * width, y);
-                        drawBlock(g2, blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), block_elem);
-                    }
-                }
+                block_elem.setLocation(start_with.x + 2 * width, y);
+                blocks.get(blocks.indexOf(block)).setDrawn(true);
+                drawBlock(g2, blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), block_elem);
             }
         }
     }
@@ -63,7 +64,7 @@ public class BuildFigure extends JApplet {
         Diamond diamond = new Diamond(drawPoint.x,  drawPoint.y, width, height);
         AffineTransform at = AffineTransform.getTranslateInstance(drawPoint.x, drawPoint.y);
         Shape shape = at.createTransformedShape(diamond);
-        g2.drawString(text, (float) (diamond.getCenterX() - diamond.getCenterX() / 8), (float) diamond.getCenterY());
+        g2.drawString(text, (float) (diamond.getCenterX() - diamond.getCenterX() / 12), (float) diamond.getCenterY());
         g2.draw(shape);
         return new Point((int)diamond.getMaxX(), (int)diamond.getMaxY() + 50);
     }
@@ -80,9 +81,21 @@ public class BuildFigure extends JApplet {
         for(int i = nodeIndex + 1; i < blockElems.size(); i++){
             if(ElementShape.SQUARE.equals(blockElems.get(i).getElementShape()))
                 drawPoint = drawSquare(g2, drawPoint, blockElems.get(i).getNode().text);
-            else if(ElementShape.DIAMOND.equals(blockElems.get(i).getElementShape()))
+            else if(ElementShape.DIAMOND.equals(blockElems.get(i).getElementShape())) {
                 drawPoint = drawDiamond(g2, drawPoint, blockElems.get(i).getNode().text);
+                drawPoint.setLocation(drawPoint.x + 2 * width, drawPoint.y);
+                Block block = getBlockWithStart(blockElems.get(i).getNode());
+                blocks.get(blocks.indexOf(block)).setDrawn(true);
+                drawBlock(g2, blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), drawPoint);
+            }
         }
+    }
+
+    private Block getBlockWithStart(ASTEntry startsWith){
+        for(Block block: blocks)
+            if(block.getStartsWith().equals(startsWith))
+                return block;
+        return null;
     }
 
     private boolean inBlock(ASTEntry elem){
