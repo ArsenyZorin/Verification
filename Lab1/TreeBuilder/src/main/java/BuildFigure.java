@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BuildFigure extends JPanel {
     private List<GraphElement> elementList;
     private List<Block> blocks;
-    Shape prevShape;
+    private Shape prevShape;
+    private List<Shape> shapes = new ArrayList<>();
     private int width = 150;
     private int height = 50;
 
@@ -33,6 +35,7 @@ public class BuildFigure extends JPanel {
                 g2.drawString(element.getNode().text, (float) (ellipse.getCenterX() - element.getNode().text.length() * 3), (float) ellipse.getCenterY());
                 g2.draw(ellipse);
                 prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY() + 50);
+                shapes.add(ellipse);
                 prevShape = ellipse;
 
             }
@@ -61,20 +64,32 @@ public class BuildFigure extends JPanel {
     }
 
     private Point drawDiamond(Graphics2D g2, Point drawPoint, String text){
-        Diamond diamond = new Diamond(drawPoint.x,  drawPoint.y, width, height);
+        Diamond diam = new Diamond(drawPoint.x,  drawPoint.y, width, height);
         AffineTransform at = AffineTransform.getTranslateInstance(drawPoint.x, drawPoint.y);
-        Shape shape = at.createTransformedShape(diamond);
-        g2.drawString(text, (float) (diamond.getCenterX() - text.length() * 3), (float) diamond.getCenterY());
-        g2.draw(shape);
+        Shape diamond = at.createTransformedShape(diam);
+        g2.drawString(text, (float) (diamond.getBounds().getCenterX() - text.length() * 3), (float) diamond.getBounds().getCenterY());
+        g2.draw(diamond);
 
         int x = (int)prevShape.getBounds().getCenterX();
         int y = (int)prevShape.getBounds().getMaxY();
 
-        if((x - width / 2) == diamond.getX())
-            g2.drawLine(x, y, (int)diamond.getCenterX(), (int)diamond.getMinY());
-        
-        prevShape = shape;
-        return new Point((int)diamond.getMaxX(), (int)diamond.getMaxY() + 50);
+        if((x - width / 2) == diamond.getBounds().getX())
+            g2.drawLine(x, y, (int)diamond.getBounds().getCenterX(), (int)diamond.getBounds().getMinY());
+        else{
+            /*int index = shapes.indexOf(prevShape);
+            for(int i = 0; i < index; i++){
+                x = (int)shapes.get(i).getBounds().getX();
+                y = (int)shapes.get(i).getBounds().getY();
+                if(x == shape.getBounds().getX() && (shape.getBounds().getY() - y <= 100))
+                    g2.drawLine(x + width / 2, y + height, (int)diamond.getCenterX(), (int)diamond.getMinY());
+
+            }*/
+            findUpper(g2, diamond);
+        }
+
+        prevShape = diamond;
+        shapes.add(diamond);
+        return new Point((int)diamond.getBounds().getMaxX(), (int)diamond.getBounds().getMaxY() + 50);
     }
 
     private Point drawSquare(Graphics2D g2, Point drawPoint, String text){
@@ -88,12 +103,26 @@ public class BuildFigure extends JPanel {
             y = (int) prevShape.getBounds().getCenterY();
             g2.drawLine(x, y, (int) rectangle.getMinX(), (int) rectangle.getCenterY());
         }
+        else if(x - width /2 != rectangle.getMinX()){
+            findUpper(g2, rectangle);
+        }
         else
             g2.drawLine(x, y, (int)rectangle.getCenterX(), (int)rectangle.getMinY());
         prevShape = rectangle;
+        shapes.add(rectangle);
         return new Point((int)rectangle.getX(), (int)rectangle.getMaxY() + 50);
     }
 
+    private void findUpper(Graphics2D g2, Shape figure){
+        int index = shapes.indexOf(prevShape);
+        for(int i = 0; i < index; i++){
+            int x = (int)shapes.get(i).getBounds().getX();
+            int y = (int)shapes.get(i).getBounds().getY();
+            if(x == figure.getBounds().getX() && (figure.getBounds().getY() - y <= 100))
+                g2.drawLine(x + width / 2, y + height, (int)figure.getBounds().getCenterX(), (int)figure.getBounds().getMinY());
+
+        }
+    }
     private void drawBlock(Graphics2D g2, int listIndex, int nodeIndex, Point drawPoint){
         List<GraphElement> blockElems = blocks.get(listIndex).getBlock();
         for(int i = nodeIndex + 1; i < blockElems.size(); i++){
@@ -145,34 +174,6 @@ public class BuildFigure extends JPanel {
             lineTo(width, height / 2);
             lineTo(width / 2, height);
             closePath();
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        public double getMaxX() {
-            return this.x + this.width;
-        }
-
-        public double getMaxY() {
-            return this.y + this.height;
-        }
-
-        public double getMinY() {
-            return this.y;
-        }
-
-        public double getCenterX() {
-            return this.x + this.width / 2.0D;
-        }
-
-        public double getCenterY() {
-            return this.y + this.height / 2.0D;
         }
     }
 }
