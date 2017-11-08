@@ -121,12 +121,14 @@ public class BuildFigure extends JPanel {
         }
     }
     private void drawBlock(Graphics2D g2, int listIndex, int nodeIndex, Point drawPoint){
+        Point blockPoint = drawPoint;
         List<GraphElement> blockElems = blocks.get(listIndex).getBlock();
         for(int i = nodeIndex + 1; i < blockElems.size(); i++){
             if(ElementShape.SQUARE.equals(blockElems.get(i).getElementShape()))
-                drawPoint = drawSquare(g2, drawPoint, blockElems.get(i).getNode().text);
+                blockPoint = drawSquare(g2, blockPoint , blockElems.get(i).getNode().text);
             else if(ElementShape.DIAMOND.equals(blockElems.get(i).getElementShape())) {
-                drawPoint = drawDiamond(g2, drawPoint, blockElems.get(i).getNode().text);
+                drawPoint = drawDiamond(g2, blockPoint, blockElems.get(i).getNode().text);
+                blockPoint.setLocation(blockPoint.x, blockPoint.y + 100);
                 drawPoint.setLocation(drawPoint.x + width, drawPoint.y - 100);
                 Block block = getBlockWithStart(blockElems.get(i).getNode());
                 blocks.get(blocks.indexOf(block)).setDrawn(true);
