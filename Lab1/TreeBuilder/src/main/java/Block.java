@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Block {
     private ASTEntry startsWith;
+    private ASTEntry endsWith;
     private List<GraphElement> block;
     private boolean isDrawn = false;
 
@@ -57,6 +58,7 @@ public class Block {
         GraphElement temp = block.get(index);
         block.remove(temp);
         block.add(temp);
+        this.endsWith = temp.getNode();
     }
 
     public List<ASTEntry> getNodes(){
