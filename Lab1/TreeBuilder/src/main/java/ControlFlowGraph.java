@@ -46,13 +46,6 @@ public class ControlFlowGraph{
             }
             treeShapes.add(nodeShapes);
         }
-        for(Block block1 : blocks){
-            for (Block block : blocks){
-                if(block.equals(block1)) continue;
-                if(block1.getBlock().containsAll(block.getBlock()))
-                    block1.removeBlocks(block.getBlock());
-            }
-        }
     }
 
     private List<GraphElement> splitJumped(ASTEntry jumpedNode){
@@ -96,6 +89,14 @@ public class ControlFlowGraph{
     public void build(){
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        for(Block block1 : blocks){
+            for (Block block : blocks){
+                if(block.equals(block1)) continue;
+                while(block1.getNodes().containsAll(block.getNodes()))
+                    block1.removeBlocks(block);
+            }
+        }
 
         for (Block block: blocks)
             block.refactor();

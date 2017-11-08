@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Block {
@@ -38,11 +39,15 @@ public class Block {
 
     public void refactor(){
         int index = -1;
+        boolean found = false;
         for (GraphElement node: block){
+            if(found) break;
+            if(!"EXPRESSION_STATEMENT".equals(node.getNode().nodeName)) continue;
             for (ASTEntry childNode : node.getNode().children) {
                 if ("POSTFIX_EXPRESSION".equals(childNode.nodeName))
                     if("FOR_STATEMENT".equals(childNode.parent.parent.nodeName)) {
                         index = block.indexOf(node);
+                        found = true;
                         break;
                     }
             }
@@ -61,7 +66,18 @@ public class Block {
         return nodes;
     }
 
-    public void removeBlocks(List<GraphElement> removeBlock){
-        this.block.removeAll(removeBlock);
+    public void removeBlocks(Block removeBlock) {
+        this.block.removeAll(removeBlock.getBlock());
+
+        List<Integer> ids = new ArrayList<>();
+        for (GraphElement element1 : removeBlock.getBlock())
+            for (GraphElement element : this.block) {
+                if (element.getNode().equals(removeBlock.getStartsWith())) continue;
+                if (element.getNode().equals(element1.getNode()))
+                    ids.add(this.block.indexOf(element));
+            }
+        Collections.reverse(ids);
+        for (int id : ids)
+            this.block.remove(id);
     }
 }
