@@ -130,7 +130,7 @@ public class BuildFigure extends JPanel {
         for(int i = nodeIndex + 1; i < blockElems.size(); i++){
             if(ElementShape.SQUARE.equals(blockElems.get(i).getElementShape())) {
                 blockPoint = drawSquare(blockPoint, blockElems.get(i).getNode());
-                drawEndLoop(blocks.get(listIndex), blockElems.get(i).getNode(), drawPoint);
+                drawEndLoop(blocks.get(listIndex), blockElems.get(i).getNode(), blockPoint);
             }
             else if(ElementShape.DIAMOND.equals(blockElems.get(i).getElementShape())) {
                 drawPoint = drawDiamond(blockPoint, blockElems.get(i).getNode());
@@ -145,17 +145,18 @@ public class BuildFigure extends JPanel {
 
     private void drawEndLoop(Block block, ASTEntry node, Point startPoint){
         if(!node.equals(block.getEndsWith())) return;
-        Point finalPoint;
+        Point finalPoint = new Point(0, 0);
 
         for(ASTEntry startNode : shapes.keySet()) {
             if (startNode.equals(block.getStartsWith())) {
                 Rectangle bounds = shapes.get(startNode).getBounds();
-                finalPoint = new Point((int)bounds.getCenterX(), (int)bounds.getMaxY());
+                finalPoint = new Point((int)bounds.getCenterX(), (int)bounds.getMinY());
+                break;
             }
         }
 
-
-        //g2.drawLine();
+        g2.drawLine(startPoint.x, startPoint.y - (int)(height*1.5),
+                finalPoint.x, finalPoint.y - height / 2);
 
 
     }
