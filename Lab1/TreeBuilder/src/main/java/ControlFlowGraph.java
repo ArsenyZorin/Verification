@@ -92,7 +92,7 @@ public class ControlFlowGraph{
 
         for(Block block1 : blocks){
             for (Block block : blocks){
-                if(block.equals(block1)) continue;
+                if(blocks.indexOf(block) == blocks.indexOf(block1)) continue;
                 while(block1.getNodes().containsAll(block.getNodes()))
                     block1.removeBlocks(block);
             }
