@@ -25,6 +25,10 @@ public class Block {
         return startsWith;
     }
 
+    public ASTEntry getEndsWith() {
+        return endsWith;
+    }
+
     public List<GraphElement> getBlock() {
         return block;
     }
