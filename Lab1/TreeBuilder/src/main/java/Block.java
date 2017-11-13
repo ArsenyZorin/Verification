@@ -63,6 +63,10 @@ public class Block {
         block.remove(temp);
         block.add(temp);
         this.endsWith = temp.getNode();
+
+        while(!block.get(0).getNode().equals(startsWith))
+            block.remove(0);
+        System.out.println();
     }
 
     public List<ASTEntry> getNodes(){
