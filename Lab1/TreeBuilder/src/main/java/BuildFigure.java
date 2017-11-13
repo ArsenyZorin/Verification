@@ -155,10 +155,12 @@ public class BuildFigure extends JPanel {
             }
         }
 
-        g2.drawLine(startPoint.x, startPoint.y - (int)(height*1.5),
-                finalPoint.x, finalPoint.y - height / 2);
-
-
+        startPoint.y = startPoint.y - (int)(height * 1.5);
+        g2.drawLine(startPoint.x, startPoint.y, finalPoint.x - width, startPoint.y);
+        startPoint.setLocation(finalPoint.x - width, startPoint.y);
+        g2.drawLine(startPoint.x, startPoint.y, startPoint.x, finalPoint.y - height / 2);
+        startPoint.setLocation(startPoint.x, finalPoint.y - height / 2);
+        g2.drawLine(startPoint.x, startPoint.y, finalPoint.x, startPoint.y);
     }
 
     private Block getBlockWithStart(ASTEntry startsWith){
