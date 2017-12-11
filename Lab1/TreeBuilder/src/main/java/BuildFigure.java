@@ -1,8 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +27,8 @@ public class BuildFigure extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        g2 = (Graphics2D) g;
+        final BufferedImage bi = new BufferedImage(1000, 3000, BufferedImage.TYPE_INT_ARGB);
+        g2 = bi.createGraphics();
 
         Point start_with = new Point(width, height);
         Point prev_elem_end = new Point(0, 0);
@@ -64,6 +68,8 @@ public class BuildFigure extends JPanel {
                 drawBlock(blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), block_elem);
             }
         }
+        try{
+            ImageIO.write(bi,"png",new File("test.png"));}catch (Exception e) {}
         for(Block block : blocks){
             block.setDrawn(false);
         }
