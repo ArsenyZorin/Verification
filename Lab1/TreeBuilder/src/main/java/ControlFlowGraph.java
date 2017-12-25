@@ -1,5 +1,5 @@
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
@@ -41,7 +41,8 @@ public class ControlFlowGraph{
                     }
                     Block block = new Block(splitJumped(node));
                     nodeShapes.addAll(block.getBlock());
-                    blocks.add(block);
+                    if(block.getBlock().size() != 0)
+                        blocks.add(block);
                 }
             }
             treeShapes.add(nodeShapes);
@@ -58,13 +59,14 @@ public class ControlFlowGraph{
             if (!isJumped(node))
                 nodeList.addAll(nonJumpedList(node));
             else {
-                if("BINARY_EXPRESSION".equals(node.nodeName)){
+                if("BINARY_EXPRESSION".equals(node.nodeName) || "CONTINUE_STATEMENT".equals(node.nodeName) || "BREAK_STATEMENT".equals(node.nodeName)){
                     nodeList.add(new GraphElement(node, ElementShape.DIAMOND));
                     continue;
                 }
                 Block block = new Block(splitJumped(node));
                 nodeList.addAll(block.getBlock());
-                blocks.add(block);
+                if(block.getBlock().size() != 0)
+                    blocks.add(block);
                 nodeList.addAll(splitJumped(node));
             }
         }
@@ -87,13 +89,34 @@ public class ControlFlowGraph{
     }
 
     public void build(){
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        Set<Integer> ids = new HashSet<>();
+
+        /*for(Block block: blocks) {
+            for (Block block1 : blocks) {
+                if (blocks.indexOf(block) == blocks.indexOf(block1)) continue;
+                if (block.equals(block1))
+                    if (!ids.contains(blocks.indexOf(block)) ||
+                            !ids.contains(blocks.indexOf(block1)))
+                        ids.add(blocks.indexOf(block1));
+            }
+        }*/
+
+        for (Block block : blocks){
+            if (blocks.indexOf(block) == blocks.lastIndexOf(block)) continue;
+            if(!ids.contains(blocks.indexOf(block)) ||
+                    !ids.contains(blocks.lastIndexOf(block)))
+                ids.add(blocks.lastIndexOf(block));
+        }
+
+        for(Integer id : ids)
+            blocks.remove((int)id);
+        
         for(Block block1 : blocks){
             for (Block block : blocks){
-                if(blocks.indexOf(block) == blocks.indexOf(block1)) continue;
-                while(block1.getNodes().containsAll(block.getNodes()))
+                if (block.getBlock().size() == 0) continue;
+                if (blocks.indexOf(block) == blocks.indexOf(block1)) continue;
+                while (block1.getNodes().containsAll(block.getNodes()))
                     block1.removeBlocks(block);
             }
         }
@@ -102,13 +125,6 @@ public class ControlFlowGraph{
             block.refactor();
 
         BuildFigure cfg = new BuildFigure(treeShapes.get(0), blocks);
-        cfg.setPreferredSize(new Dimension(1000, 3000));
-        JScrollPane scrollPane = new JScrollPane(cfg);
-        cfg.setAutoscrolls(true);
-
-        frame.getContentPane().add(scrollPane);
-        frame.pack();
-        frame.setLocationByPlatform(true);
-        frame.setVisible(true);
+        cfg.paint();
     }
 }
