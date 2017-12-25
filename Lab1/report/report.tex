@@ -58,60 +58,59 @@
 
 Для построения графа потока управления были созданы следующие элементы, которые указаны в листинге \ref{code:elems}.
 
+\lstinputlisting[
+	label=code:elems,
+	caption={Классы и структуры, необходимые для построения CFG},
+]{elems.java}
+\parindent=1cm
 
-\subsection{Визуализация CFG}
-\subsection{Результаты работы}
-\subsection{Выводы}
+Класс GraphElement - узел графа. В узле хранятся:
 
 \begin{itemize}
-\item первый элемент списка
-\item второй элемент списка
+\item ASTEntry - узел дерева, которому соответствует данный узел графа
+\item ElementShape - значение перечисления, отвечающее за форму узла графа
 \end{itemize}
 
-
-\subsection{Картинка}
-
-%\begin{figure}[H]
-%	\begin{center}
-%		\includegraphics[scale=0.7]{sample}
-%		\caption{название картинки} 
-%		\label{pic:pic_name} % название для ссылок внутри кода
-%	\end{center}
-%\end{figure}
-
-
-\subsection{Листинг}
+Для построения CFG был реализован следующий класс (листинг \ref{code:cfgbuilder}).
 
 \lstinputlisting[
-	label=code:hello,
-	caption={hell\_o.c},% для печати символ '_' требует выходной символ '\'
-]{hell_o.c}
-\parindent=1cm % командна \lstinputlisting сбивает параментры отступа
-Текст без отступа (следует за вставкой)
+	label=code:cfgbuilder,
+	caption={Представление графа},
+]{ControlFlowGraph.java}
+\parindent=1cm
 
-Новый параграф
+Данный класс строит CFG для каждого метода из AST и отображает граф. В данном классе, для построения CFG, происходит обход узлов, которые могут быть в теле метода и соответствующим образом обрабатывается каждый из них.
 
-\noindent Новый параграф с принудительно выключенным отступом
+\subsection{Визуализация CFG}
 
+Для визуализации полученных результатов используеся библиотека JavaFX, с помощью которой граф жкспортируется в .png формат. Класс, котороый реализует функции визуализации приведен в листинге \ref{code:visualization}.
 
-\subsection{Частичный листинг}
-% настрока частичного ввода (требуется один раз)
+\lstinputlisting[
+	label=code:visualization,
+	caption={Визуализация графа},
+]{BuildFigure.java}
+\parindent=1cm
 
-\subsection{Таблица}
+\subsection{Результаты работы}
 
-\begin{table}[H]
-	\caption{ Название таблицы}
+Проверка корректности работы программы проверялась на следующем тестовом входном файле (листинг \ref{code:test}).
+
+\lstinputlisting[
+	label=code:test,
+	caption={Тестовый файл},
+]{test.java}
+\parindent=1cm
+
+Результаты работы CFG для методов из предыдущего листинга показаны на рисунке \ref{pic:test}
+
+\begin{figure}[H]
 	\begin{center}
-		\begin{tabular}{|l|l|}
-			\hline
-			top left & top right\\ \hline
-			bot left & bot right\\ \hline
-		\end{tabular}
-		\label{tabular:tab_examp}
+		\includegraphics[scale=0.3]{test}
+		\caption{Тестовый пример} 
+		\label{pic:test} % название для ссылок внутри кода
 	\end{center}
-\end{table}
+\end{figure}
 
-\section{Выводы}
+\subsection{Выводы}
 
-Исключения, пожалуй, составляют таблицы, так как их значительно сложнее создавать кодом, нежели в графическом редакторе. Но здесь никто не запрещает использовать визуальные средства создания таблиц для \LaTeX\ .
 \end{document}
