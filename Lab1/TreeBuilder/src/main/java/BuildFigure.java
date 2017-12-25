@@ -10,8 +10,9 @@ import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class BuildFigure extends JPanel {
+public class BuildFigure {
     private List<GraphElement> elementList;
     private List<Block> blocks;
     private Shape prevShape;
@@ -25,13 +26,12 @@ public class BuildFigure extends JPanel {
         this.blocks = blocks;
     }
 
-    @Override
-    public void paint(Graphics g) {
+    public void paint(){
         final BufferedImage bi = new BufferedImage(1000, 3000, BufferedImage.TYPE_INT_ARGB);
         g2 = bi.createGraphics();
 
         Point start_with = new Point(width, height);
-        Point prev_elem_end = new Point(0, 0);
+//        Point prev_elem_end = new Point(0, 0);
         Point block_elem = new Point(0, 0);
 
         g2.setPaint(Color.BLACK);
@@ -41,7 +41,7 @@ public class BuildFigure extends JPanel {
                 Ellipse2D ellipse = new Ellipse2D.Double(start_with.x, start_with.y, width, height);
                 g2.drawString(element.getNode().text, (float) (ellipse.getCenterX() - element.getNode().text.length() * 3), (float) ellipse.getCenterY());
                 g2.draw(ellipse);
-                prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY() + 50);
+ //               prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY() + 50);
                 shapes.put(element.getNode(), ellipse);
                 prevShape = ellipse;
 
@@ -50,7 +50,9 @@ public class BuildFigure extends JPanel {
                 if(inBlock(element.getNode()))
                     continue;
 
-                prev_elem_end = drawSquare(new Point(start_with.x, prev_elem_end.y), element.getNode());
+                //prev_elem_end = drawSquare(new Point(start_with.x, prev_elem_end.y), element.getNode());
+                int y = (int)prevShape.getBounds().getMaxY() + height;
+                drawSquare(new Point(start_with.x, y), element.getNode());
 
             }
             else {
@@ -59,9 +61,11 @@ public class BuildFigure extends JPanel {
                 if(block.isDrawn()) continue;
 
                 int x = start_with.x;
-                int y = prev_elem_end.y;
+                //int y = prev_elem_end.y;
+                int y = (int)prevShape.getBounds().getMaxY() + height;
 
-                prev_elem_end = drawDiamond(new Point(x, y), element.getNode());
+                //prev_elem_end = drawDiamond(new Point(x, y), element.getNode());
+                drawDiamond(new Point(x, y), element.getNode());
 
                 block_elem.setLocation(start_with.x + 2 * width, y);
                 blocks.get(blocks.indexOf(block)).setDrawn(true);
@@ -120,15 +124,25 @@ public class BuildFigure extends JPanel {
     }
 
     private void findUpper(Shape figure){
-        ArrayList<Shape> shapesList = new ArrayList<>(shapes.values());
-        int index = shapesList.indexOf(prevShape);
-        for(int i = 0; i < index; i++){
-            int x = (int)shapesList.get(i).getBounds().getX();
-            int y = (int)shapesList.get(i).getBounds().getY();
-            if(x == figure.getBounds().getX() && (figure.getBounds().getY() - y <= 100))
-                g2.drawLine(x + width / 2, y + height, (int)figure.getBounds().getCenterX(), (int)figure.getBounds().getMinY());
-
+        ArrayList<Shape> shapesList = new ArrayList<>(shapes.values().stream().filter(
+                p->p.getBounds().getX() == (int)figure.getBounds().getX()).collect(Collectors.toList()));
+        int x = (int)figure.getBounds().getCenterX();
+        int y = 0;
+        for(Shape elem : shapesList){
+           if((int)elem.getBounds().getMaxY() > y)
+               y = (int)elem.getBounds().getMaxY();
         }
+
+        g2.drawLine(x, y, x, (int)figure.getBounds().getMinY());
+        //int index = shapesList.indexOf(prevShape);
+        //for(int i = 0; i < index; i++){
+        //for(int i = 0; i < shapesList.size(); i++){
+        //    int x = (int)shapesList.get(i).getBounds().getX();
+        //    int y = (int)shapesList.get(i).getBounds().getY();
+        //    if(x == figure.getBounds().getX() && (figure.getBounds().getY() - y <= 100))
+        //        g2.drawLine(x + width / 2, y + height, (int)figure.getBounds().getCenterX(), (int)figure.getBounds().getMinY());
+
+        //}
     }
     private void drawBlock(int listIndex, int nodeIndex, Point drawPoint){
         Point blockPoint = drawPoint;
