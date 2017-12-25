@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class Block {
     private ASTEntry startsWith;
@@ -83,11 +81,28 @@ public class Block {
         for (GraphElement element1 : removeBlock.getBlock())
             for (GraphElement element : this.block) {
                 if (element.getNode().equals(removeBlock.getStartsWith())) continue;
-                if (element.getNode().equals(element1.getNode()))
+                //if (element.getNode().equals(element1.getNode()))
                     ids.add(this.block.indexOf(element));
             }
         Collections.reverse(ids);
-        for (int id : ids)
+        Set<Integer> unique_ids = new HashSet<>(ids);
+        for (Integer id : unique_ids)
             this.block.remove(id);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if(object == null) return false;
+        Block block = (Block) object;
+
+        if(endsWith == null)
+            return this.getNodes().equals(block.getNodes()) &&
+                this.startsWith.equals(block.startsWith) &&
+                this.isDrawn == block.isDrawn;
+        else
+            return this.getNodes().equals(block.getNodes()) &&
+                    this.startsWith.equals(block.startsWith) &&
+                    this.endsWith.equals(block.endsWith) &&
+                    this.isDrawn == block.isDrawn;
     }
 }
