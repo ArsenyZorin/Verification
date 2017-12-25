@@ -27,10 +27,10 @@ public class BuildFigure {
     }
 
     public void paint(){
-        final BufferedImage bi = new BufferedImage(1000, 3000, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage bi = new BufferedImage(5000, 5000, BufferedImage.TYPE_INT_ARGB);
         g2 = bi.createGraphics();
 
-        Point start_with = new Point(width, height);
+        //Point start_with = new Point(width, height);
 //        Point prev_elem_end = new Point(0, 0);
         Point block_elem = new Point(0, 0);
 
@@ -38,7 +38,7 @@ public class BuildFigure {
 
         for(GraphElement element : elementList) {
             if(ElementShape.ELLIPSE.equals(element.getElementShape())) {
-                Ellipse2D ellipse = new Ellipse2D.Double(start_with.x, start_with.y, width, height);
+                Ellipse2D ellipse = new Ellipse2D.Double(width, height, width, height);
                 g2.drawString(element.getNode().text, (float) (ellipse.getCenterX() - element.getNode().text.length() * 3), (float) ellipse.getCenterY());
                 g2.draw(ellipse);
  //               prev_elem_end.setLocation(ellipse.getMaxX(), ellipse.getMaxY() + 50);
@@ -51,8 +51,9 @@ public class BuildFigure {
                     continue;
 
                 //prev_elem_end = drawSquare(new Point(start_with.x, prev_elem_end.y), element.getNode());
+                int x = 150;
                 int y = (int)prevShape.getBounds().getMaxY() + height;
-                drawSquare(new Point(start_with.x, y), element.getNode());
+                drawSquare(new Point(x, y), element.getNode());
 
             }
             else {
@@ -60,16 +61,16 @@ public class BuildFigure {
                 if(block == null) continue;
                 if(block.isDrawn()) continue;
 
-                int x = start_with.x;
+                int x = width;// (int)prevShape.getBounds().getMinX();//start_with.x;
                 //int y = prev_elem_end.y;
                 int y = (int)prevShape.getBounds().getMaxY() + height;
 
                 //prev_elem_end = drawDiamond(new Point(x, y), element.getNode());
                 drawDiamond(new Point(x, y), element.getNode());
 
-                block_elem.setLocation(start_with.x + 2 * width, y);
-                blocks.get(blocks.indexOf(block)).setDrawn(true);
+                block_elem.setLocation(prevShape.getBounds().getMaxX() + width, y);
                 drawBlock(blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), block_elem);
+                blocks.get(blocks.indexOf(block)).setDrawn(true);
             }
         }
         try{
@@ -83,7 +84,8 @@ public class BuildFigure {
         Diamond diam = new Diamond(drawPoint.x,  drawPoint.y, width, height);
         AffineTransform at = AffineTransform.getTranslateInstance(drawPoint.x, drawPoint.y);
         Shape diamond = at.createTransformedShape(diam);
-        g2.drawString(node.text, (float) (diamond.getBounds().getCenterX() - node.text.length() * 3), (float) diamond.getBounds().getCenterY());
+        g2.drawString(node.text, (float) (diamond.getBounds().getCenterX() - node.text.length() * 3),
+                (float) diamond.getBounds().getCenterY());
         g2.draw(diamond);
 
         int x = (int)prevShape.getBounds().getCenterX();
@@ -103,7 +105,8 @@ public class BuildFigure {
 
     private Point drawSquare(Point drawPoint, ASTEntry node){
         Rectangle rectangle = new Rectangle(drawPoint.x, drawPoint.y, width, height);
-        g2.drawString(node.text, (float) (rectangle.getCenterX() - node.text.length() * 3), (float) rectangle.getCenterY());
+        g2.drawString(node.text, (float) (rectangle.getCenterX() - node.text.length() * 3),
+                (float) rectangle.getCenterY());
         g2.draw(rectangle);
         int x = (int)prevShape.getBounds().getCenterX();
         int y = (int)prevShape.getBounds().getMaxY();
@@ -153,10 +156,12 @@ public class BuildFigure {
                 drawEndLoop(blocks.get(listIndex), blockElems.get(i).getNode(), blockPoint);
             }
             else if(ElementShape.DIAMOND.equals(blockElems.get(i).getElementShape())) {
+                Block block = getBlockWithStart(blockElems.get(i).getNode());
+                if(block == null) continue;
+                if(block.isDrawn()) continue;
                 drawPoint = drawDiamond(blockPoint, blockElems.get(i).getNode());
                 blockPoint.setLocation(blockPoint.x, blockPoint.y + 100);
                 drawPoint.setLocation(drawPoint.x + width, drawPoint.y - 100);
-                Block block = getBlockWithStart(blockElems.get(i).getNode());
                 blocks.get(blocks.indexOf(block)).setDrawn(true);
                 drawBlock(blocks.indexOf(block), block.getNodes().indexOf(block.getStartsWith()), drawPoint);
             }
