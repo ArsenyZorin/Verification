@@ -33,6 +33,14 @@ public class Block {
         return block;
     }
 
+    public ASTEntry getBreakStmnt() {
+        return breakStmnt;
+    }
+
+    public ASTEntry getContinueStmnt() {
+        return continueStmnt;
+    }
+
     private void findStartElem(){
         for (GraphElement element : block){
             if(ElementShape.DIAMOND.equals(element.getElementShape())){
@@ -48,6 +56,14 @@ public class Block {
         ASTEntry cond = null;
         for (GraphElement node: block){
             if(found) break;
+            if ("BREAK_STATEMENT".equals(node.getNode().nodeName)) {
+                this.breakStmnt = node.getNode();
+                continue;
+            }
+            if ("CONTINUE_STATEMENT".equals(node.getNode().nodeName)) {
+                this.continueStmnt = node.getNode();
+                continue;
+            }
             if("WHILE_STATEMENT".equals(node.getNode().parent.nodeName)) {
                 cond = node.getNode().getFirstDepthNode("IDENTIFIER");
                 continue;
