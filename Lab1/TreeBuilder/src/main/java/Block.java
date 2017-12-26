@@ -3,6 +3,8 @@ import java.util.*;
 public class Block {
     private ASTEntry startsWith;
     private ASTEntry endsWith;
+    private ASTEntry breakStmnt;
+    private ASTEntry continueStmnt;
     private List<GraphElement> block;
     private boolean isDrawn = false;
 
@@ -41,31 +43,45 @@ public class Block {
     }
 
     public void refactor(){
-        int index = -1;
         boolean found = false;
+        GraphElement temp = null;
+        ASTEntry cond = null;
         for (GraphElement node: block){
             if(found) break;
+            if("WHILE_STATEMENT".equals(node.getNode().parent.nodeName)) {
+                cond = node.getNode().getFirstDepthNode("IDENTIFIER");
+                continue;
+            }
+            ASTEntry par = node.getNode().getParentByName("WHILE_STATEMENT");
+            if (par != null){
+                ASTEntry ident = node.getNode().getFirstDepthNode("IDENTIFIER");
+                if (ident == null) continue;
+                if (cond == null) continue;
+                if (ident.text.equals(cond.text)) {
+                    temp = node;
+                    break;
+                }
+            }
+
             if(!"EXPRESSION_STATEMENT".equals(node.getNode().nodeName)) continue;
             for (ASTEntry childNode : node.getNode().children) {
                 if ("POSTFIX_EXPRESSION".equals(childNode.nodeName) ||
                         "PREFIX_EXPRESSION".equals(childNode.nodeName))
                     if("FOR_STATEMENT".equals(childNode.parent.parent.nodeName)) {
-                        index = block.indexOf(node);
+                        temp = node;
                         found = true;
                         break;
                     }
             }
         }
-        if(index == -1) return;
+        if(temp == null) return;
 
-        GraphElement temp = block.get(index);
         block.remove(temp);
         block.add(temp);
         this.endsWith = temp.getNode();
 
         while(!block.get(0).getNode().equals(startsWith))
             block.remove(0);
-        System.out.println();
     }
 
     public List<ASTEntry> getNodes(){
