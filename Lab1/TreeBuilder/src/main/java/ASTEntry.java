@@ -195,6 +195,15 @@ public class ASTEntry {
         return node;
     }
 
+
+    public ASTEntry getParentByName(String parentName) {
+        if (parent == null || "METHOD".equals(parent.nodeName))
+            return null;
+        if (parentName.equals(parent.nodeName))
+            return parent;
+        return parent.getParentByName(parentName);
+    }
+
     @Override
     public String toString() {
         return shiftedString("");
