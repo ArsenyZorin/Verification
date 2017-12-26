@@ -81,12 +81,13 @@ public class Block {
         for (GraphElement element1 : removeBlock.getBlock())
             for (GraphElement element : this.block) {
                 if (element.getNode().equals(removeBlock.getStartsWith())) continue;
-                //if (element.getNode().equals(element1.getNode()))
-                    ids.add(this.block.indexOf(element));
+                if (element.getNode().equals(element1.getNode())) {
+                    if(!ids.contains(this.block.indexOf(element)))
+                        ids.add(this.block.indexOf(element));
+                }
             }
         Collections.reverse(ids);
-        Set<Integer> unique_ids = new HashSet<>(ids);
-        for (Integer id : unique_ids)
+        for (int id : ids)
             this.block.remove(id);
     }
 
