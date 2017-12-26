@@ -59,7 +59,8 @@ public class ControlFlowGraph{
             if (!isJumped(node))
                 nodeList.addAll(nonJumpedList(node));
             else {
-                if("BINARY_EXPRESSION".equals(node.nodeName) || "CONTINUE_STATEMENT".equals(node.nodeName) || "BREAK_STATEMENT".equals(node.nodeName)){
+                if("BINARY_EXPRESSION".equals(node.nodeName) || "CONTINUE_STATEMENT".equals(node.nodeName) ||
+                        "BREAK_STATEMENT".equals(node.nodeName)){
                     nodeList.add(new GraphElement(node, ElementShape.DIAMOND));
                     continue;
                 }
