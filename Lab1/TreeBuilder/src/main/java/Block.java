@@ -5,6 +5,7 @@ public class Block {
     private ASTEntry endsWith;
     private ASTEntry breakStmnt;
     private ASTEntry continueStmnt;
+    private ASTEntry upperStatement;
     private List<GraphElement> block;
     private boolean isDrawn = false;
 
@@ -39,6 +40,14 @@ public class Block {
 
     public ASTEntry getContinueStmnt() {
         return continueStmnt;
+    }
+
+    public ASTEntry getUpperStatement() {
+        return upperStatement;
+    }
+
+    public void setUpperStatement(ASTEntry upperStatement) {
+        this.upperStatement = upperStatement;
     }
 
     private void findStartElem(){
@@ -119,6 +128,8 @@ public class Block {
                         ids.add(this.block.indexOf(element));
                 }
             }
+
+        Collections.sort(ids);
         Collections.reverse(ids);
         for (int id : ids)
             this.block.remove(id);
