@@ -1,10 +1,7 @@
-import java.awt.*;
 import java.util.*;
 import java.util.List;
-import javax.swing.*;
 
 public class ControlFlowGraph{
-
     private List<ASTEntry> trees;
     private List<String> jumped;
     private List<List<GraphElement>> treeShapes = new ArrayList<>();
@@ -59,8 +56,7 @@ public class ControlFlowGraph{
             if (!isJumped(node))
                 nodeList.addAll(nonJumpedList(node));
             else {
-                if("BINARY_EXPRESSION".equals(node.nodeName) || "CONTINUE_STATEMENT".equals(node.nodeName) ||
-                        "BREAK_STATEMENT".equals(node.nodeName)){
+                if("BINARY_EXPRESSION".equals(node.nodeName)){
                     nodeList.add(new GraphElement(node, ElementShape.DIAMOND));
                     continue;
                 }
@@ -92,17 +88,6 @@ public class ControlFlowGraph{
     public void build(){
 
         Set<Integer> ids = new HashSet<>();
-
-        /*for(Block block: blocks) {
-            for (Block block1 : blocks) {
-                if (blocks.indexOf(block) == blocks.indexOf(block1)) continue;
-                if (block.equals(block1))
-                    if (!ids.contains(blocks.indexOf(block)) ||
-                            !ids.contains(blocks.indexOf(block1)))
-                        ids.add(blocks.indexOf(block1));
-            }
-        }*/
-
         for (Block block : blocks){
             if (blocks.indexOf(block) == blocks.lastIndexOf(block)) continue;
             if(!ids.contains(blocks.indexOf(block)) ||
@@ -110,15 +95,21 @@ public class ControlFlowGraph{
                 ids.add(blocks.lastIndexOf(block));
         }
 
-        for(Integer id : ids)
+        List<Integer> new_ids = new ArrayList<>(ids);
+
+        Collections.reverse(new_ids);
+        for(Integer id : new_ids)
             blocks.remove((int)id);
         
         for(Block block1 : blocks){
             for (Block block : blocks){
                 if (block.getBlock().size() == 0) continue;
                 if (blocks.indexOf(block) == blocks.indexOf(block1)) continue;
-                while (block1.getNodes().containsAll(block.getNodes()))
+                while (block1.getNodes().containsAll(block.getNodes())) {
                     block1.removeBlocks(block);
+                    if(block.getUpperStatement() == null)
+                        block.setUpperStatement(block1.getStartsWith());
+                }
             }
         }
 
