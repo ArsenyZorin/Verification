@@ -48,7 +48,7 @@ public class Block {
             if(!"EXPRESSION_STATEMENT".equals(node.getNode().nodeName)) continue;
             for (ASTEntry childNode : node.getNode().children) {
                 if ("POSTFIX_EXPRESSION".equals(childNode.nodeName) ||
-                        "POSTFIX_EXPRESSION".equals(childNode.nodeName))
+                        "PREFIX_EXPRESSION".equals(childNode.nodeName))
                     if("FOR_STATEMENT".equals(childNode.parent.parent.nodeName)) {
                         index = block.indexOf(node);
                         found = true;
