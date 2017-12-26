@@ -73,58 +73,58 @@ public class ASTEntry {
         return stringBuilder.toString();
     }
 
-    public ASTEntry removeSpaces(List<String> blackList){
-        children = children.stream().filter(p->!blackList.contains(p.nodeName)).collect(Collectors.toList());
-        for(ASTEntry child : children) {
+    public ASTEntry removeSpaces(List<String> blackList) {
+        children = children.stream().filter(p -> !blackList.contains(p.nodeName)).collect(Collectors.toList());
+        for (ASTEntry child : children) {
             child.removeSpaces(blackList);
         }
         return this;
     }
 
-    public int getNodesAmount(){
+    public int getNodesAmount() {
         int amount = 0;
-        if(children.size() == 0) {
+        if (children.size() == 0) {
             amount++;
             return amount;
         }
-        for(ASTEntry node : children){
+        for (ASTEntry node : children) {
             amount += node.getNodesAmount();
         }
         return amount;
     }
 
-    public List<String> getAllTokensList(){
+    public List<String> getAllTokensList() {
         List<String> nodesTokens = new ArrayList<>();
-        if(children.size() == 0){
+        if (children.size() == 0) {
             nodesTokens.add(nodeName);
             return nodesTokens;
         }
-        for(ASTEntry node : children){
+        for (ASTEntry node : children) {
             nodesTokens.addAll(node.getAllTokensList());
         }
         return nodesTokens;
     }
 
-    public String getAllTokensString(){
+    public String getAllTokensString() {
         String nodesTokens = "";
-        if(children.size() == 0){
+        if (children.size() == 0) {
             nodesTokens += nodeName + " ";
             return nodesTokens;
         }
-        for(ASTEntry node : children){
+        for (ASTEntry node : children) {
             nodesTokens += node.getAllTokensString();
         }
         return nodesTokens;
     }
 
-    public void mutate(List<String> blackList){
+    public void mutate(List<String> blackList) {
         Random rnd = new Random();
         int func = rnd.nextInt(2);
 
-        if(children.size() < 4)
+        if (children.size() < 4)
             func = 1;
 
-        switch(func) {
+        switch (func) {
             case 0:
                 deleteNode(blackList);
                 break;
@@ -136,7 +136,7 @@ public class ASTEntry {
         }
     }
 
-    private void deleteNode(List<String> blackList){
+    private void deleteNode(List<String> blackList) {
         System.out.println("Node deletion");
         int[] pos = getStartEndMethod();
         Random rnd = new Random();
@@ -149,19 +149,19 @@ public class ASTEntry {
         });
     }
 
-    private void copyNode(){
+    private void copyNode() {
         System.out.println("Node copy-paste");
         int[] pos = getStartEndMethod();
         Random rnd = new Random();
         int copyLine = rnd.nextInt(pos[1] - 1) + pos[0] + 1;
         int pasteLine = rnd.nextInt(pos[1] - 1) + pos[0] + 1;
 
-        while (pasteLine == copyLine){
+        while (pasteLine == copyLine) {
             pasteLine = rnd.nextInt(pos[1] - 1) + pos[0] + 1;
         }
 
         ASTEntry copyNode = null;
-        for(ASTEntry child : children){
+        for (ASTEntry child : children) {
             if (children.indexOf(child) == copyLine) {
                 copyNode = new ASTEntry(child);
                 break;
@@ -170,15 +170,29 @@ public class ASTEntry {
         children.add(pasteLine, copyNode);
     }
 
-    private int[] getStartEndMethod(){
+    private int[] getStartEndMethod() {
         int pos[] = new int[2];
-        children.forEach(p->{
-            if("LBRACE".equals(p.nodeName))
+        children.forEach(p -> {
+            if ("LBRACE".equals(p.nodeName))
                 pos[0] = children.indexOf(p);
-            if("RBRACE".equals(p.nodeName))
+            if ("RBRACE".equals(p.nodeName))
                 pos[1] = children.indexOf(p);
         });
         return pos;
+    }
+
+    public ASTEntry getFirstDepthNode(String findNode) {
+        ASTEntry node = null;
+        for (ASTEntry child : children) {
+            if (child.children.size() != 0) {
+                node = child.getFirstDepthNode(findNode);
+                if (node != null)
+                    return node;
+            }
+            if (findNode.equals(child.nodeName))
+                return child;
+        }
+        return node;
     }
 
     @Override
