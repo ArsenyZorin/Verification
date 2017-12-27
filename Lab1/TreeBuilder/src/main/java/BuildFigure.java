@@ -209,16 +209,39 @@ public class BuildFigure {
                 }
             }
 
-            startPoint.x = startPoint.x + width / 2;
-            startPoint.y = startPoint.y - (int) (height * 0.5);
-            g2.drawLine(startPoint.x, startPoint.y,
-                    finalPoint.x - width, startPoint.y);
-            startPoint.setLocation(finalPoint.x - width, startPoint.y);
-            g2.drawLine(startPoint.x, startPoint.y, startPoint.x,
-                    finalPoint.y - height / 2);
-            startPoint.setLocation(startPoint.x, finalPoint.y - height / 2);
-            g2.drawLine(startPoint.x, startPoint.y,
-                    finalPoint.x, startPoint.y);
+            startPoint.setLocation(startPoint.x + width / 2, startPoint.y - height);
+            Point endPoint = new Point(startPoint.x, (int)(startPoint.y + height * 0.5));
+            g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+            startPoint.setLocation(endPoint);
+            endPoint.setLocation(finalPoint.x - width / 1.1, endPoint.y);
+            g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+            startPoint.setLocation(endPoint);
+            endPoint.setLocation(startPoint.x, finalPoint.y - height / 2);
+            g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+            startPoint.setLocation(endPoint.x, endPoint.y);
+            g2.drawLine(startPoint.x, startPoint.y, finalPoint.x, startPoint.y);
+
+        } else if (node.equals(block.getBreakStmnt())){
+            for (ASTEntry startNode : shapes.keySet()) {
+                if (startNode.equals(block.getUpperStatement())) {
+                    Rectangle bounds = shapes.get(startNode).getBounds();
+                    finalPoint = new Point((int) bounds.getCenterX(),
+                            (int) bounds.getMinY());
+                    break;
+                }
+            }
+
+            startPoint.setLocation(startPoint.x + width / 2, startPoint.y - height);
+            Point endPoint = new Point(startPoint.x, (int)(startPoint.y + height * 0.5));
+            g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+            startPoint.setLocation(endPoint);
+            endPoint.setLocation((int)(finalPoint.x - width / 1.2), endPoint.y);
+            g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+            startPoint.setLocation(endPoint);
+            endPoint.setLocation(startPoint.x, finalPoint.y + height * 1.5);
+            g2.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+            startPoint.setLocation(endPoint.x, endPoint.y);
+            g2.drawLine(startPoint.x, startPoint.y, finalPoint.x, startPoint.y);
         }
     }
 
