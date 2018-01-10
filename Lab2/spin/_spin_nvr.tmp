@@ -1,0 +1,40 @@
+never all_slope {    /* !([] ((len(mans_queue)==0))) */
+T0_init:
+	do
+	:: atomic { (! (((len(mans_queue)==0)))) -> assert(!(! (((len(mans_queue)==0))))) }
+	:: (1) -> goto T0_init
+	od;
+accept_all:
+	skip
+}
+never pay_slope {    /* !((((([] ((! ((men[0]==PAY))) || (<> ((men[0]==SLOPE))))) && ([] ((! ((men[1]==PAY))) || (<> ((men[1]==SLOPE)))))) && ([] ((! ((men[2]==PAY))) || (<> ((men[2]==SLOPE)))))) && ([] ((! ((men[3]==PAY))) || (<> ((men[3]==SLOPE)))))) && ([] ((! ((men[4]==PAY))) || (<> ((men[4]==SLOPE)))))) */
+T0_init:
+	do
+	:: (! ((! ((men[4]==PAY)))) && ! (((men[4]==SLOPE))) && ((! ((! ((men[1]==PAY))))) || (((! ((! ((men[2]==PAY))))) || (((! ((! ((men[3]==PAY))))) || (! ((! ((men[4]==PAY)))))))))) && ((! ((! ((men[0]==PAY))))) || (((! ((! ((men[1]==PAY))))) || (((! ((! ((men[2]==PAY))))) || (((! ((! ((men[3]==PAY))))) || (! ((! ((men[4]==PAY))))))))))))) -> goto accept_S8
+	:: (! ((! ((men[3]==PAY)))) && ! (((men[3]==SLOPE))) && ((! ((! ((men[1]==PAY))))) || (((! ((! ((men[2]==PAY))))) || (((! ((! ((men[3]==PAY))))) || (! ((! ((men[4]==PAY)))))))))) && ((! ((! ((men[0]==PAY))))) || (((! ((! ((men[1]==PAY))))) || (((! ((! ((men[2]==PAY))))) || (((! ((! ((men[3]==PAY))))) || (! ((! ((men[4]==PAY))))))))))))) -> goto accept_S13
+	:: (! ((! ((men[2]==PAY)))) && ! (((men[2]==SLOPE))) && ((! ((! ((men[0]==PAY))))) || (((! ((! ((men[1]==PAY))))) || (((! ((! ((men[2]==PAY))))) || (((! ((! ((men[3]==PAY))))) || (! ((! ((men[4]==PAY))))))))))))) -> goto accept_S18
+	:: (! ((! ((men[1]==PAY)))) && ! (((men[1]==SLOPE)))) -> goto accept_S23
+	:: (! ((! ((men[0]==PAY)))) && ! (((men[0]==SLOPE)))) -> goto accept_S28
+	:: (1) -> goto T0_init
+	od;
+accept_S8:
+	do
+	:: (! (((men[4]==SLOPE)))) -> goto accept_S8
+	od;
+accept_S13:
+	do
+	:: (! (((men[3]==SLOPE)))) -> goto accept_S13
+	od;
+accept_S18:
+	do
+	:: (! (((men[2]==SLOPE)))) -> goto accept_S18
+	od;
+accept_S23:
+	do
+	:: (! (((men[1]==SLOPE)))) -> goto accept_S23
+	od;
+accept_S28:
+	do
+	:: (! (((men[0]==SLOPE)))) -> goto accept_S28
+	od;
+}
