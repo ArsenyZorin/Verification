@@ -125,10 +125,6 @@ ltl pay_slope{
 	[]((men[4] == PAY)->(<>(men[4] == SLOPE)))
 }
 
-ltl pay_fifo{ 
-	[] ((men[0] == PAY) implies ((men[1] == WAIT_P))) 
-}
-
 ltl slope_fifo{
 	[] ((men[0] == SLOPE) implies ((men[1] == LIFT))) &&
 	[] ((men[1] == LIFT) implies ((men[2] == WAIT_L))) &&
