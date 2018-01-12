@@ -29,10 +29,14 @@ proctype decksAction(int id)
 				fi
 			:: (decks[id] == BUSY) -> 
 				decks[id] = FREE;
-				men[man_id] = WAIT_L;
+				if
+				:: (men[man_id] == PAY) ->
+					men[man_id] = WAIT_L;
+				fi
 				mans_queue ! man_id;
 			else -> 
-				printf("Some error\n"); 
+				printf("Some error 38\n"); 
+				printf("Deck with id %d value is %d\n", id, decks[id]);
 				break;
 			fi
 		}
@@ -46,30 +50,31 @@ proctype queueAction(int id)
 		:: (men[id] == WAIT_P) -> 
 			printf("Man %d waits for paying\n", id);
 		:: (men[id] == PAY) -> 
-			printf("Man %d pays for lifting", id);
+			printf("Man %d pays for lifting\n", id);
 		:: (men[id] == WAIT_L) ->
-			if
-			:: (id == 0) -> men[id] = LIFT;
-			fi
-			if
-			:: (men [id - 1] == WAIT_L) -> men[id] = WAIT_L;
-			:: (men [id - 1] == LIFT) -> men[id] = WAIT_L;
-			:: (men [id - 1] == SLOPE) -> men[id] = LIFT;
-			fi
+			//if
+		//	:: (id == 0) -> 
+			men[id] = LIFT;
+		//	fi
+		//	if
+		//	:: (men [id - 1] == WAIT_L) -> men[id] = WAIT_L;
+		//	:: (men [id - 1] == LIFT) -> men[id] = WAIT_L;
+		//	:: (men [id - 1] == SLOPE) -> men[id] = LIFT;
+		//	fi
 			printf("Man %d waits for lifitng\n", id);
 		:: (men[id] == LIFT) ->
-			printf("Man %d lifts", id);
+			printf("Man %d lifts\n", id);
 			men[id] = SLOPE; 
 		:: (men[id] == SLOPE) ->
-			printf("Man %d slopes", id);
+			printf("Man %d slopes\n", id);
 		:: else -> 
-			printf("Some error");
+			printf("Some error 70\n");
 		fi
 	}
 }
 
 proctype new_queue_gen() {
-	int man_id = 1;
+	int man_id = 4;
 	do
 	::
 		atomic {
@@ -79,6 +84,10 @@ proctype new_queue_gen() {
 
 			if
 			::(rand_value == 1) ->
+				printf("man_id value in gen: %d\n", man_id);
+				if 
+				:: (man_id < 0 ) -> skip;
+				fi
 				men[man_id] = WAIT_P;
 				mans_queue ! man_id;
 				man_id = man_id - 1;
@@ -92,6 +101,7 @@ proctype new_queue_gen() {
 
 init {
 	int i;
+	printf("Hello\n");
 	atomic {
 		run new_queue_gen();
 		for(i: 0 .. (queueAmount - 1)){
@@ -103,8 +113,11 @@ init {
 	}
 }
 
-//ltl all_slope{ eventually (men[0] == SLOPE && men[1] == SLOPE && men[2] == SLOPE && men[3] == SLOPE && men[4] == SLOPE)}
-ltl all_slope{  always (len(mans_queue) == 0)}
+ltl free_decks{
+	[]<> (decks[0] == FREE && decks[1] == FREE)
+}
+
+ltl all_slope{ []<> (men[0] == SLOPE && men[1] == SLOPE && men[2] == SLOPE && men[3] == SLOPE && men[4] == SLOPE)}
 
 ltl pay_slope{ 
 	[]((men[0] == PAY)->(<>(men[0] == SLOPE)))
@@ -117,3 +130,4 @@ ltl pay_slope{
 	&&
 	[]((men[4] == PAY)->(<>(men[4] == SLOPE)))
 }
+
