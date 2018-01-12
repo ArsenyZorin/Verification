@@ -106,11 +106,11 @@ init {
 }
 
 ltl free_decks{
-	[]<> (decks[0] == FREE && decks[1] == FREE)
+	<>[] (decks[0] == FREE && decks[1] == FREE)
 }
 
 ltl all_slope{ 
-	[]<> (len(mans_queue) == 0)
+	<>[] (len(mans_queue) == 0)
 }
 
 ltl pay_slope{ 
@@ -125,3 +125,13 @@ ltl pay_slope{
 	[]((men[4] == PAY)->(<>(men[4] == SLOPE)))
 }
 
+ltl pay_fifo{ 
+	[] ((men[0] == PAY) implies ((men[1] == WAIT_P))) 
+}
+
+ltl slope_fifo{
+	[] ((men[0] == SLOPE) implies ((men[1] == LIFT))) &&
+	[] ((men[1] == LIFT) implies ((men[2] == WAIT_L))) &&
+	[] ((men[2] == WAIT_L) implies ((men[3] == PAY))) &&
+	[] ((men[3] == PAY) implies ((men[4] == WAIT_P)))
+}
