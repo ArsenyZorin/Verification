@@ -52,15 +52,7 @@ proctype queueAction(int id)
 		:: (men[id] == PAY) -> 
 			printf("Man %d pays for lifting\n", id);
 		:: (men[id] == WAIT_L) ->
-			//if
-		//	:: (id == 0) -> 
 			men[id] = LIFT;
-		//	fi
-		//	if
-		//	:: (men [id - 1] == WAIT_L) -> men[id] = WAIT_L;
-		//	:: (men [id - 1] == LIFT) -> men[id] = WAIT_L;
-		//	:: (men [id - 1] == SLOPE) -> men[id] = LIFT;
-		//	fi
 			printf("Man %d waits for lifitng\n", id);
 		:: (men[id] == LIFT) ->
 			printf("Man %d lifts\n", id);
@@ -117,7 +109,9 @@ ltl free_decks{
 	[]<> (decks[0] == FREE && decks[1] == FREE)
 }
 
-ltl all_slope{ []<> (men[0] == SLOPE && men[1] == SLOPE && men[2] == SLOPE && men[3] == SLOPE && men[4] == SLOPE)}
+ltl all_slope{ 
+	[]<> (len(mans_queue) == 0)
+}
 
 ltl pay_slope{ 
 	[]((men[0] == PAY)->(<>(men[0] == SLOPE)))
