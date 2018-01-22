@@ -1,7 +1,10 @@
 #define queueAmount 5
 #define deckAmount 2
+#define patience 10
+#define service_time 5
+#define time 15
 
-mtype = { WAIT_P, PAY, WAIT_L, LIFT, SLOPE }; //Queue states
+mtype = { WAIT_P, PAY, WAIT_L, LIFT, SLOPE, GONE }; //Queue states
 mtype = { FREE, BUSY }; //Deck states
 
 byte men[queueAmount] = WAIT_P;
@@ -9,12 +12,17 @@ byte decks[deckAmount] = FREE;
 
 chan mans_queue = [queueAmount] of {int}
 int rand_value;
+int waiting_time[queueAmount] = -1
+int t = 0;
 
 proctype decksAction(int id)
 {
 	int man_id = 0;
+	int internal_time = 1;
+	int int_service_time = 1;
 	do
-	::
+	:: (t <= time) ->
+		(t == internal_time) -> internal_time = internal_time + 1;
 		atomic {
 			if
 			:: (decks[id] == FREE) -> 
@@ -28,12 +36,15 @@ proctype decksAction(int id)
 				:: else -> skip;
 				fi
 			:: (decks[id] == BUSY) -> 
-				decks[id] = FREE;
 				if
-				:: (men[man_id] == PAY) ->
-					men[man_id] = WAIT_L;
+				:: (int_service_time < service_time ) -> int_service_time = int_service_time + 1;
+				:: (int_service_time == service_time) ->
+					(men[man_id] == PAY) ->
+						men[man_id] = WAIT_L;
+					decks[id] = FREE;
+					mans_queue ! man_id;
+					int_service_time = 1;
 				fi
-				mans_queue ! man_id;
 			else -> 
 				printf("Some error 38\n"); 
 				printf("Deck with id %d value is %d\n", id, decks[id]);
@@ -45,24 +56,34 @@ proctype decksAction(int id)
 
 proctype queueAction(int id)
 {
-	atomic {
-		if
-		:: (men[id] == WAIT_P) -> 
-			printf("Man %d waits for paying\n", id);
-		:: (men[id] == PAY) -> 
-			printf("Man %d pays for lifting\n", id);
-		:: (men[id] == WAIT_L) ->
-			men[id] = LIFT;
-			printf("Man %d waits for lifitng\n", id);
-		:: (men[id] == LIFT) ->
-			printf("Man %d lifts\n", id);
-			men[id] = SLOPE; 
-		:: (men[id] == SLOPE) ->
-			printf("Man %d slopes\n", id);
-		:: else -> 
-			printf("Some error 70\n");
-		fi
-	}
+	int internal_time = 1;
+	do :: (t <= time) ->
+		(t == internal_time) -> internal_time = internal_time + 1;
+		atomic {
+			if
+			:: (men[id] == WAIT_P) -> 
+				if
+				:: (( t - waiting_time[id]) < patience) -> skip;
+				:: ((t - waiting_time[id]) == patience) -> men[id] = GONE;
+				fi
+				printf("Man %d waits for paying\n", id);
+			:: (men[id] == PAY) -> 
+				printf("Man %d pays for lifting\n", id);
+			:: (men[id] == WAIT_L) ->
+				men[id] = LIFT;
+				printf("Man %d waits for lifitng\n", id);
+			:: (men[id] == LIFT) ->
+				printf("Man %d lifts\n", id);
+				men[id] = SLOPE; 
+			:: (men[id] == SLOPE) ->
+				printf("Man %d slopes\n", id);
+			:: else -> 
+				printf("Some error 70\n");
+			fi
+		}
+		:: else -> break;
+	od
+	
 }
 
 proctype new_queue_gen() {
@@ -130,4 +151,8 @@ ltl slope_fifo{
 	[] ((men[1] == LIFT) implies ((men[2] == WAIT_L))) &&
 	[] ((men[2] == WAIT_L) implies ((men[3] == PAY))) &&
 	[] ((men[3] == PAY) implies ((men[4] == WAIT_P)))
+}
+
+ltl queue_patience {
+	[]( !((men[1] == WAIT_P) && ((t - waiting_time[1]) > patience)))
 }
