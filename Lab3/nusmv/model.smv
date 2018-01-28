@@ -1,0 +1,26 @@
+MODULE deskWork()
+VAR
+	state: {free, busy};
+	client_id: -1..5;
+
+DEFINE
+	max_queue := 5;
+
+ASSIGN
+	init(state) := free;
+	next(state) :=
+		case
+			state = free :
+				case
+					men.nextClient = -1					:free;
+					men.nextClient > -1
+						& men.nextClient < max_queue	:busy;
+				esac;
+			state = busy : free;
+		esac;
+	init(man_id) := -1;
+	next(man_id) :=
+		case
+			state = free : man_id;
+			state = busy : men.nextClient;
+		esac;
