@@ -135,15 +135,15 @@ ltl all_slope{
 }
 
 ltl pay_slope{ 
-	[]((men[0] == PAY)->(<>(men[0] == SLOPE)))
+	[]((men[0] == WAIT_P)->(<>(men[0] == SLOPE)))
 	&&
-	[]((men[1] == PAY)->(<>(men[1] == SLOPE)))
+	[]((men[1] == WAIT_P)->(<>(men[1] == SLOPE)))
 	&&
-	[]((men[2] == PAY)->(<>(men[2] == SLOPE)))
+	[]((men[2] == WAIT_P)->(<>(men[2] == SLOPE)))
 	&&
-	[]((men[3] == PAY)->(<>(men[3] == SLOPE)))
+	[]((men[3] == WAIT_P)->(<>(men[3] == SLOPE)))
 	&&
-	[]((men[4] == PAY)->(<>(men[4] == SLOPE)))
+	[]((men[4] == WAIT_P)->(<>(men[4] == SLOPE)))
 }
 
 ltl slope_fifo{
