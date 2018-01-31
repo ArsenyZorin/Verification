@@ -1,0 +1,27 @@
+*** This is NuSMV 2.6.0 (compiled on Tue Jan  9 19:34:51 2018)
+*** Enabled addons are: compass
+*** For more information on NuSMV see <http://nusmv.fbk.eu>
+*** or email to <nusmv-users@list.fbk.eu>.
+*** Please report bugs to <Please report bugs to <nusmv-users@fbk.eu>>
+*** Copyright (c) 2010-2014, Fondazione Bruno Kessler
+*** This version of NuSMV is linked to the CUDD library version 2.4.1
+*** Copyright (c) 1995-2004, Regents of the University of Colorado
+*** This version of NuSMV is linked to the MiniSat SAT solver.
+*** See http://minisat.se/MiniSat.html
+*** Copyright (c) 2003-2006, Niklas Een, Niklas Sorensson
+*** Copyright (c) 2007-2010, Niklas Sorensson
+-- specification ((((AF men1.state = slope & AF men2.state = slope) 
+	& AF men3.state = slope)
+	& AF men4.state = slope)
+	& AF men5.state = slope)  is true
+-- specification AG ((desk0.state = busy | desk1.state = busy) ->
+	AF ((((men1.state = slope | men2.state = slope)
+	| men3.state = slope)
+	| men4.state = slope)
+	| men5.state = slope))  is true
+-- specification AG (((((men1.state = wait_p -> AF men1.state = slope)
+	& (men2.state = wait_p -> AF men2.state = slope))
+	& (men3.state = wait_p -> AF men3.state = slope))
+	& (men4.state = wait_p -> AF men4.state = slope))
+	& (men5.state = wait_p -> AF men5.state = slope))  is true
+-- specification ( F men1.state = wait_p -> (men2.state != pay U men1.state = wait_p))  is true
