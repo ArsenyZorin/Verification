@@ -90,10 +90,11 @@ SPEC ( AF(men1.state = slope) &
 		AF(men5.state = slope)
 		) 
 
-SPEC AG(desk0.state = busy | desk1.state = busy -> AF(men1.state = slope | men2.state = slope 
-													| men3.state = slope | men4.state = slope
-													| men5.state = slope)
-													)
+SPEC AG(desk0.state = busy | desk1.state = busy ->
+					AF(men1.state = slope | men2.state = slope 
+					| men3.state = slope | men4.state = slope
+					| men5.state = slope)
+		)
 
 LTLSPEC (F(men1.state=wait_p)->((men2.state != pay)U(men1.state = wait_p)))
 
