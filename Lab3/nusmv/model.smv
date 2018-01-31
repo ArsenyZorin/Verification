@@ -1,7 +1,7 @@
-MODULE deskWork()
+MODULE deskWork(id, men)
 VAR
 	state: {free, busy};
-	client_id: -1..5;
+	man_id: -1..5;
 
 DEFINE
 	max_queue := 5;
@@ -10,12 +10,8 @@ ASSIGN
 	init(state) := free;
 	next(state) :=
 		case
-			state = free :
-				case
-					men.nextClient = -1					:free;
-					men.nextClient > -1
-						& men.nextClient < max_queue	:busy;
-				esac;
+			state = free & men.nextClient > -1 : busy;
+			state = free & men.nextClient = -1 : free;
 			state = busy : free;
 		esac;
 	init(man_id) := -1;
@@ -24,3 +20,87 @@ ASSIGN
 			state = free : man_id;
 			state = busy : men.nextClient;
 		esac;
+
+
+MODULE clientProcess(id, men, desk0, desk1)
+VAR
+	state: {wait_p, pay, wait_l, lift, slope, gone};
+	service_time : 0..patience;
+DEFINE
+	patience := 10;
+
+ASSIGN
+	init(state):=wait_p;
+	next(state):=
+		case
+			men.nextClient = id							:pay;
+			state = wait_p & service_time = patience	:gone;
+			desk0.man_id = id | desk1.man_id = id		:pay;
+			state = pay & desk0.man_id != id			:wait_l;
+			state =	wait_l								:slope;
+			TRUE : state;
+		esac;
+	
+	init(service_time) := 0;
+	next(service_time) :=
+		case
+			state = wait_p :
+				case
+					service_time = patience : service_time;
+					TRUE					: service_time + 1;
+				esac;
+			TRUE : service_time;
+		esac;
+
+MODULE queue(desk0, desk1)
+VAR
+	nextClient: -1..max_queue;
+DEFINE
+	max_queue := 5;
+
+ASSIGN
+	init (nextClient) := 0;
+	next (nextClient) :=
+		case 
+			nextClient < max_queue:
+				case
+					desk0.man_id = nextClient | desk1.man_id = nextClient		: nextClient + 1;
+					desk0.man_id != nextClient & desk1.man_id != nextClient		: nextClient;
+				esac;
+			nextClient = max_queue	: max_queue;
+			TRUE					: nextClient;
+		esac;
+			
+
+MODULE main
+VAR
+	men1 : clientProcess(0, men, desk0, desk1);
+	men2 : clientProcess(1, men, desk0, desk1);
+	men3 : clientProcess(2, men, desk0, desk1);
+	men4 : clientProcess(3, men, desk0, desk1);
+	men5 : clientProcess(4, men, desk0, desk1);
+	men	 : queue(desk0, desk1);
+	desk0 : deskWork(0, men);
+	desk1 : deskWork(1, men);
+
+SPEC ( AF(men1.state = slope) &
+		AF(men2.state = slope) &
+		AF(men3.state = slope) &
+		AF(men4.state = slope) &
+		AF(men5.state = slope)
+		) 
+
+SPEC AG(desk0.state = busy | desk1.state = busy -> AF(men1.state = slope | men2.state = slope 
+													| men3.state = slope | men4.state = slope
+													| men5.state = slope)
+													)
+
+LTLSPEC (F(men1.state=wait_p)->((men2.state != pay)U(men1.state = wait_p)))
+
+SPEC AG( (men1.state = wait_p -> AF men1.state = slope) &
+		(men2.state = wait_p -> AF men2.state = slope) &
+		(men3.state = wait_p -> AF men3.state = slope) &
+		(men4.state = wait_p -> AF men4.state = slope) &
+		(men5.state = wait_p -> AF men5.state = slope)
+		)
+
