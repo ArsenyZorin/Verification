@@ -1,0 +1,83 @@
+pan: ltl formula free_decks
+(Spin Version 6.4.7 -- 19 August 2017)
+        + Partial Order Reduction
+Full statespace search for:
+        never claim             + (free_decks)
+        assertion violations    + (if within scope of claim)
+        acceptance   cycles     + (fairness disabled)
+        invalid end states      - (disabled by never claim)
+State-vector 220 byte, depth reached 49, errors: 0
+      258 states, stored
+      770 states, matched
+     1028 transitions (= stored+matched)
+      283 atomic steps
+hash conflicts:         0 (resolved)
+Stats on memory usage (in Megabytes):
+    0.061       equivalent memory usage for states (stored*(State-vector + overhead))
+    0.269       actual memory usage for states
+  128.000       memory used for hash table (-w24)
+    0.534       memory used for DFS stack (-m10000)
+  128.730       total actual memory usage
+
+pan: ltl formula all_slope
+(Spin Version 6.4.7 -- 19 August 2017)
+        + Partial Order Reduction
+Full statespace search for:
+        never claim             + (all_slope)
+        assertion violations    + (if within scope of claim)
+        acceptance   cycles     + (fairness disabled)
+        invalid end states      - (disabled by never claim)
+State-vector 220 byte, depth reached 49, errors: 0
+      258 states, stored
+      770 states, matched
+     1028 transitions (= stored+matched)
+      283 atomic steps
+hash conflicts:         0 (resolved)
+Stats on memory usage (in Megabytes):
+    0.061       equivalent memory usage for states (stored*(State-vector + overhead))
+    0.269       actual memory usage for states
+  128.000       memory used for hash table (-w24)
+    0.534       memory used for DFS stack (-m10000)
+  128.730       total actual memory usage
+
+pan: ltl formula slope_fifo
+(Spin Version 6.4.7 -- 19 August 2017)
+        + Partial Order Reduction
+Full statespace search for:
+        never claim             + (slope_fifo)
+        assertion violations    + (if within scope of claim)
+        acceptance   cycles     + (fairness disabled)
+        invalid end states      - (disabled by never claim)
+State-vector 220 byte, depth reached 49, errors: 0
+      258 states, stored
+      770 states, matched
+     1028 transitions (= stored+matched)
+      283 atomic steps
+hash conflicts:         0 (resolved)
+Stats on memory usage (in Megabytes):
+    0.061       equivalent memory usage for states (stored*(State-vector + overhead))
+    0.269       actual memory usage for states
+  128.000       memory used for hash table (-w24)
+    0.534       memory used for DFS stack (-m10000)
+  128.730       total actual memory usage
+
+pan: ltl formula queue_patience
+(Spin Version 6.4.7 -- 19 August 2017)
+        + Partial Order Reduction
+Full statespace search for:
+        never claim             + (queue_patience)
+        assertion violations    + (if within scope of claim)
+        acceptance   cycles     + (fairness disabled)
+        invalid end states      - (disabled by never claim)
+State-vector 220 byte, depth reached 49, errors: 0
+      258 states, stored
+      770 states, matched
+     1028 transitions (= stored+matched)
+      283 atomic steps
+hash conflicts:         0 (resolved)
+Stats on memory usage (in Megabytes):
+    0.061       equivalent memory usage for states (stored*(State-vector + overhead))
+    0.269       actual memory usage for states
+  128.000       memory used for hash table (-w24)
+    0.534       memory used for DFS stack (-m10000)
+  128.730       total actual memory usage
